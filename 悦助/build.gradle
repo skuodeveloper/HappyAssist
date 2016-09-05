@@ -31,7 +31,7 @@ android {
                 if (variant.buildType.name.equals('release')) {
                     fileName = "YUEZHU_${defaultConfig.versionName}.apk"
                 } else if (variant.buildType.name.equals('debug')) {
-                    ///fileName = "DEBUG${defaultConfig.versionName}.${getTime()}.apk"
+                    //fileName = "DEBUG${defaultConfig.versionName}.${getTime()}.apk"
                     fileName = "YUEZHU_${defaultConfig.versionName}.apk"
                 }
                 output.outputFile = new File(outputFile.parent, fileName)
