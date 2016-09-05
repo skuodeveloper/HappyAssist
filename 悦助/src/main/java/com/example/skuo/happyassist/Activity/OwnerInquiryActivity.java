@@ -39,37 +39,82 @@ public class OwnerInquiryActivity extends AppCompatActivity {
     private static final int CLOSE_WAIT_DIALOG = 4;
     private static final int LAST_PAGE_ALREADY = 5;
     private static final int JUMP_TO_DETAIL = 6;
-
+    public static int ActionType = 0;
+    protected Context mContext;
     private ImageView iv_back, iv_refresh, iv_call;
     private TextView bt_all, bt_waiting, bt_processing, bt_completed, bt_back;
     private View show_all, show_waitting, show_processing, show_completed;
-
     private Adapter_owner_list apt_owner;
     private MyCustomListView GroupList;//自定义ListView
-
-    protected Context mContext;
     private ProgressDialog dialog = null;
     private boolean adddata = false;//记录是否累加
     /**
      * 加载数据条数
      */
     private int TotalCount = 0;
-
     /**
      * 请求数据的页数
      */
     private int pageIndex = 1;
-
     /**
      * 请求条件
      */
     private RequestParam req = null;
-
     /**
      * 当前页面状态
      */
     private int currentStatus = 0;
+    View.OnClickListener hander = new View.OnClickListener() {
+        public void onClick(View v) {
+            switch (v.getId()) {
+                case R.id.iv_back:
+                    finish();
+                    break;
+                case R.id.iv_refresh:
+                    Intent intent = new Intent(OwnerInquiryActivity.this, OwnerFilterActivity.class);
+                    startActivityForResult(intent, REQUEST_FILTER_CODE);
+                    break;
+                case R.id.bt_all:
+                    show_all.setBackgroundColor(getResources().getColor(R.color.bg_Black));
+                    show_waitting.setBackgroundColor(getResources().getColor(R.color.bg_Gray));
+                    show_processing.setBackgroundColor(getResources().getColor(R.color.bg_Gray));
+                    show_completed.setBackgroundColor(getResources().getColor(R.color.bg_Gray));
 
+                    currentStatus = 0;
+                    reSearch();
+                    break;
+                case R.id.bt_waiting:
+                    show_all.setBackgroundColor(getResources().getColor(R.color.bg_Gray));
+                    show_waitting.setBackgroundColor(getResources().getColor(R.color.bg_Black));
+                    show_processing.setBackgroundColor(getResources().getColor(R.color.bg_Gray));
+                    show_completed.setBackgroundColor(getResources().getColor(R.color.bg_Gray));
+
+                    currentStatus = 1;
+                    reSearch();
+                    break;
+                case R.id.bt_processing:
+                    show_all.setBackgroundColor(getResources().getColor(R.color.bg_Gray));
+                    show_waitting.setBackgroundColor(getResources().getColor(R.color.bg_Gray));
+                    show_processing.setBackgroundColor(getResources().getColor(R.color.bg_Black));
+                    show_completed.setBackgroundColor(getResources().getColor(R.color.bg_Gray));
+
+                    currentStatus = 2;
+                    reSearch();
+                    break;
+                case R.id.bt_completed:
+                    show_all.setBackgroundColor(getResources().getColor(R.color.bg_Gray));
+                    show_waitting.setBackgroundColor(getResources().getColor(R.color.bg_Gray));
+                    show_processing.setBackgroundColor(getResources().getColor(R.color.bg_Gray));
+                    show_completed.setBackgroundColor(getResources().getColor(R.color.bg_Black));
+
+                    currentStatus = 3;
+                    reSearch();
+                    break;
+                default:
+                    break;
+            }
+        }
+    };
     /**
      * 存储网络返回的数据
      */
@@ -78,8 +123,49 @@ public class OwnerInquiryActivity extends AppCompatActivity {
      * 存储网络返回的数据中的data字段
      */
     private ArrayList<HashMap<String, Object>> arrayList = new ArrayList<HashMap<String, Object>>();
+    /*
+       handle
+     */
+    private Handler myHandler = new Handler() {
 
-    public static int ActionType = 0;
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what) {
+                case REFRESH_DATA_FINISH:
+                    apt_owner.notifyDataSetChanged();
+                    GroupList.onRefreshComplete();    //下拉刷新完成
+                    break;
+                case LOAD_DATA_FINISH:
+                    apt_owner.notifyDataSetChanged();
+                    GroupList.onLoadMoreComplete();    //加载更多完成
+                    break;
+                case OPEN_WAIT_DIALOG:
+                    openDialog();
+                    break;
+                case CLOSE_WAIT_DIALOG:
+                    closeDialog();
+                    break;
+                case LAST_PAGE_ALREADY:
+                    Toast.makeText(mContext, "已经最后一页了", Toast.LENGTH_SHORT).show();
+                    break;
+                case JUMP_TO_DETAIL:
+//                    try {
+//                        Intent intent = new Intent(mContext, RepairDetailActivity.class);
+//
+//                        RepairInfo rep = (RepairInfo) msg.obj;
+//                        intent.putExtra("Infos", rep);
+//
+//                        startActivityForResult(intent, JUMP_TO_DETAIL);
+//                    } catch (Exception ex) {
+//                        ex.printStackTrace();
+//                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,6 +190,7 @@ public class OwnerInquiryActivity extends AppCompatActivity {
         req.AccountID = USERINFO.AccountID;
         req.AccountType = USERINFO.AccountType;
         req.PropertyID = USERINFO.PropertyID;
+        req.EstateID = USERINFO.EstateID;
 
         req.Status = currentStatus;
         req.Phone = "";
@@ -179,102 +266,6 @@ public class OwnerInquiryActivity extends AppCompatActivity {
         }
     }
 
-    /*
-       handle
-     */
-    private Handler myHandler = new Handler() {
-
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            switch (msg.what) {
-                case REFRESH_DATA_FINISH:
-                    apt_owner.notifyDataSetChanged();
-                    GroupList.onRefreshComplete();    //下拉刷新完成
-                    break;
-                case LOAD_DATA_FINISH:
-                    apt_owner.notifyDataSetChanged();
-                    GroupList.onLoadMoreComplete();    //加载更多完成
-                    break;
-                case OPEN_WAIT_DIALOG:
-                    openDialog();
-                    break;
-                case CLOSE_WAIT_DIALOG:
-                    closeDialog();
-                    break;
-                case LAST_PAGE_ALREADY:
-                    Toast.makeText(mContext, "已经最后一页了", Toast.LENGTH_SHORT).show();
-                    break;
-                case JUMP_TO_DETAIL:
-//                    try {
-//                        Intent intent = new Intent(mContext, RepairDetailActivity.class);
-//
-//                        RepairInfo rep = (RepairInfo) msg.obj;
-//                        intent.putExtra("Infos", rep);
-//
-//                        startActivityForResult(intent, JUMP_TO_DETAIL);
-//                    } catch (Exception ex) {
-//                        ex.printStackTrace();
-//                    }
-                    break;
-                default:
-                    break;
-            }
-        }
-    };
-
-    View.OnClickListener hander = new View.OnClickListener() {
-        public void onClick(View v) {
-            switch (v.getId()) {
-                case R.id.iv_back:
-                    finish();
-                    break;
-                case R.id.iv_refresh:
-                    Intent intent = new Intent(OwnerInquiryActivity.this, OwnerFilterActivity.class);
-                    startActivityForResult(intent, REQUEST_FILTER_CODE);
-                    break;
-                case R.id.bt_all:
-                    show_all.setBackgroundColor(getResources().getColor(R.color.bg_Black));
-                    show_waitting.setBackgroundColor(getResources().getColor(R.color.bg_Gray));
-                    show_processing.setBackgroundColor(getResources().getColor(R.color.bg_Gray));
-                    show_completed.setBackgroundColor(getResources().getColor(R.color.bg_Gray));
-
-                    currentStatus = 0;
-                    reSearch();
-                    break;
-                case R.id.bt_waiting:
-                    show_all.setBackgroundColor(getResources().getColor(R.color.bg_Gray));
-                    show_waitting.setBackgroundColor(getResources().getColor(R.color.bg_Black));
-                    show_processing.setBackgroundColor(getResources().getColor(R.color.bg_Gray));
-                    show_completed.setBackgroundColor(getResources().getColor(R.color.bg_Gray));
-
-                    currentStatus = 1;
-                    reSearch();
-                    break;
-                case R.id.bt_processing:
-                    show_all.setBackgroundColor(getResources().getColor(R.color.bg_Gray));
-                    show_waitting.setBackgroundColor(getResources().getColor(R.color.bg_Gray));
-                    show_processing.setBackgroundColor(getResources().getColor(R.color.bg_Black));
-                    show_completed.setBackgroundColor(getResources().getColor(R.color.bg_Gray));
-
-                    currentStatus = 2;
-                    reSearch();
-                    break;
-                case R.id.bt_completed:
-                    show_all.setBackgroundColor(getResources().getColor(R.color.bg_Gray));
-                    show_waitting.setBackgroundColor(getResources().getColor(R.color.bg_Gray));
-                    show_processing.setBackgroundColor(getResources().getColor(R.color.bg_Gray));
-                    show_completed.setBackgroundColor(getResources().getColor(R.color.bg_Black));
-
-                    currentStatus = 3;
-                    reSearch();
-                    break;
-                default:
-                    break;
-            }
-        }
-    };
-
     //拨打电话
     private void callDirectly(String mobile) {
         Intent intent = new Intent();
@@ -328,6 +319,40 @@ public class OwnerInquiryActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        switch (requestCode) {
+            case REQUEST_FILTER_CODE:
+                if (data != null) {
+                    req = new RequestParam();
+                    req.AccountID = USERINFO.AccountID;
+                    req.AccountType = USERINFO.AccountType;
+                    req.PropertyID = USERINFO.PropertyID;
+                    req.pageSize = PAGESIZE;
+                    req.page = pageIndex;
+                    req.Status = currentStatus;
+
+                    req.EstateID = data.getIntExtra("EstateID", 0);
+                    req.GroupID = data.getIntExtra("GroupID", 0);
+                    req.BuildingID = data.getIntExtra("BuildingID", 0);
+                    req.CellID = data.getIntExtra("CellID", 0);
+                    req.HouseID = data.getIntExtra("HouseID", 0);
+                    req.Phone = "";
+
+                    //请求网络数据
+                    new WareTask().execute();
+                }
+                break;
+            case JUMP_TO_DETAIL:
+                if (ActionType == 1) {
+                    ActionType = 0;
+                    reSearch();
+                }
+                break;
+        }
+    }
+
     private class WareTask extends AsyncTask<Void, Void, HashMap<String, Object>> {
 
         @Override
@@ -373,40 +398,6 @@ public class OwnerInquiryActivity extends AppCompatActivity {
                     apt_owner.notifyDataSetChanged();
                 }
             }
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-        switch (requestCode) {
-            case REQUEST_FILTER_CODE:
-                if (data != null) {
-                    req = new RequestParam();
-                    req.AccountID = USERINFO.AccountID;
-                    req.AccountType = USERINFO.AccountType;
-                    req.PropertyID = USERINFO.PropertyID;
-                    req.pageSize = PAGESIZE;
-                    req.page = pageIndex;
-                    req.Status = currentStatus;
-
-                    req.EstateID = data.getIntExtra("EstateID", 0);
-                    req.GroupID = data.getIntExtra("GroupID",0);
-                    req.BuildingID = data.getIntExtra("BuildingID",0);
-                    req.CellID = data.getIntExtra("CellID",0);
-                    req.HouseID = data.getIntExtra("HouseID",0);
-                    req.Phone = "";
-
-                    //请求网络数据
-                    new WareTask().execute();
-                }
-                break;
-            case JUMP_TO_DETAIL:
-                if (ActionType == 1) {
-                    ActionType = 0;
-                    reSearch();
-                }
-                break;
         }
     }
 }

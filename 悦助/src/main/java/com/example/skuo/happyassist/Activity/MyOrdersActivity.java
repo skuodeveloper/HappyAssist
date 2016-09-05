@@ -40,57 +40,31 @@ public class MyOrdersActivity extends Activity {
     private static final int CLOSE_WAIT_DIALOG = 4;
     private static final int LAST_PAGE_ALREADY = 5;
     private static final int JUMP_TO_DETAIL = 6;
-
+    public static int ActionType = 0;
+    protected Context mContext;
     private TextView bt_all, bt_waiting, bt_processing, bt_completed, bt_back;
     private View show_all, show_waitting, show_processing, show_completed;
     private ImageView iv_back;
-
     private Adapter_repair_order rep_Adapter;
     private MyCustomListView GroupList;//自定义ListView
-
-    protected Context mContext;
     private ProgressDialog dialog = null;
     private boolean adddata = false;//记录是否累加
     /**
      * 加载数据条数
      */
     private int TotalCount = 0;
-
     /**
      * 请求数据的页数
      */
     private int pageIndex = 1;
-
     /**
      * 请求条件
      */
     private RequestParam req = null;
-
     /**
      * 当前页面状态
      */
     private int currentStatus = 0;
-
-    /**
-     * 存储网络返回的数据
-     */
-    private HashMap<String, Object> hashMap;
-    /**
-     * 存储网络返回的数据中的data字段
-     */
-    private ArrayList<HashMap<String, Object>> arrayList = new ArrayList<HashMap<String, Object>>();
-
-    public static int ActionType = 0;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_my_order);
-
-        mContext = this;
-        initView();
-    }
-
     View.OnClickListener hander = new View.OnClickListener() {
         public void onClick(View v) {
             switch (v.getId()) {
@@ -138,6 +112,90 @@ public class MyOrdersActivity extends Activity {
             }
         }
     };
+    /**
+     * 存储网络返回的数据
+     */
+    private HashMap<String, Object> hashMap;
+    /**
+     * 存储网络返回的数据中的data字段
+     */
+    private ArrayList<HashMap<String, Object>> arrayList = new ArrayList<HashMap<String, Object>>();
+    /*
+      handle
+    */
+    private Handler myHandler = new Handler() {
+
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what) {
+                case REFRESH_DATA_FINISH:
+                    rep_Adapter.notifyDataSetChanged();
+                    GroupList.onRefreshComplete();    //下拉刷新完成
+                    break;
+                case LOAD_DATA_FINISH:
+                    rep_Adapter.notifyDataSetChanged();
+                    GroupList.onLoadMoreComplete();    //加载更多完成
+                    break;
+                case OPEN_WAIT_DIALOG:
+                    openDialog();
+                    break;
+                case CLOSE_WAIT_DIALOG:
+                    closeDialog();
+                    break;
+                case LAST_PAGE_ALREADY:
+                    Toast.makeText(mContext, "已经最后一页了", Toast.LENGTH_SHORT).show();
+                    break;
+                case JUMP_TO_DETAIL:
+                    try {
+                        Intent intent = null;
+                        RepairInfo repairInfo = (RepairInfo) msg.obj;
+
+                        if (repairInfo.OrderType == 1)//报修
+                        {
+                            intent = new Intent(mContext, RepairDetailActivity.class);
+                            repairInfo.EstateID = USERINFO.EstateID;
+                            intent.putExtra("Infos", repairInfo);
+                        } else if (repairInfo.OrderType == 2)//投诉建议
+                        {
+                            ComplaintInfo complaintInfo = new ComplaintInfo();
+                            complaintInfo.Address = repairInfo.Address;
+                            complaintInfo.Comment = repairInfo.Comment;
+                            complaintInfo.EstateID = USERINFO.EstateID;
+                            complaintInfo.EstateName = repairInfo.EstateName;
+                            complaintInfo.ID = repairInfo.ID;
+                            complaintInfo.Info = repairInfo.Info;
+                            complaintInfo.Status = repairInfo.Status;
+                            complaintInfo.Time = repairInfo.Time;
+                            complaintInfo.TypeName = repairInfo.TypeName;
+                            complaintInfo.UserName = repairInfo.UserName;
+                            complaintInfo.UserPhone = repairInfo.UserPhone;
+
+                            intent = new Intent(mContext, ComplaintDetailActivity.class);
+                            intent.putExtra("Infos", complaintInfo);
+                        }
+
+
+                        intent.putExtra("PAGE", 1);
+                        startActivityForResult(intent, JUMP_TO_DETAIL);
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+    };
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_my_order);
+
+        mContext = this;
+        initView();
+    }
 
     private void initView() {
         ((TextView) findViewById(R.id.tv_top_title)).setText("我的工单");
@@ -244,75 +302,6 @@ public class MyOrdersActivity extends Activity {
         }.start();
     }
 
-    /*
-      handle
-    */
-    private Handler myHandler = new Handler() {
-
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            switch (msg.what) {
-                case REFRESH_DATA_FINISH:
-                    rep_Adapter.notifyDataSetChanged();
-                    GroupList.onRefreshComplete();    //下拉刷新完成
-                    break;
-                case LOAD_DATA_FINISH:
-                    rep_Adapter.notifyDataSetChanged();
-                    GroupList.onLoadMoreComplete();    //加载更多完成
-                    break;
-                case OPEN_WAIT_DIALOG:
-                    openDialog();
-                    break;
-                case CLOSE_WAIT_DIALOG:
-                    closeDialog();
-                    break;
-                case LAST_PAGE_ALREADY:
-                    Toast.makeText(mContext, "已经最后一页了", Toast.LENGTH_SHORT).show();
-                    break;
-                case JUMP_TO_DETAIL:
-                    try {
-                        Intent intent = null;
-                        RepairInfo repairInfo = (RepairInfo) msg.obj;
-
-                        if(repairInfo.OrderType == 1)//报修
-                        {
-                            intent = new Intent(mContext, RepairDetailActivity.class);
-                            repairInfo.EstateID = USERINFO.EstateID;
-                            intent.putExtra("Infos", repairInfo);
-                        }
-                        else if(repairInfo.OrderType == 2)//投诉建议
-                        {
-                            ComplaintInfo complaintInfo = new ComplaintInfo();
-                            complaintInfo.Address = repairInfo.Address;
-                            complaintInfo.Comment = repairInfo.Comment;
-                            complaintInfo.EstateID = USERINFO.EstateID;
-                            complaintInfo.EstateName = repairInfo.EstateName;
-                            complaintInfo.ID = repairInfo.ID;
-                            complaintInfo.Info = repairInfo.Info;
-                            complaintInfo.Status = repairInfo.Status;
-                            complaintInfo.Time = repairInfo.Time;
-                            complaintInfo.TypeName = repairInfo.TypeName;
-                            complaintInfo.UserName = repairInfo.UserName;
-                            complaintInfo.UserPhone = repairInfo.UserPhone;
-
-                            intent = new Intent(mContext, ComplaintDetailActivity.class);
-                            intent.putExtra("Infos", complaintInfo);
-                        }
-
-
-                        intent.putExtra("PAGE", 1);
-                        startActivityForResult(intent, JUMP_TO_DETAIL);
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                    }
-                    break;
-                default:
-                    break;
-            }
-        }
-    };
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
@@ -358,6 +347,7 @@ public class MyOrdersActivity extends Activity {
         req.pageSize = PAGESIZE;
         req.AccountType = USERINFO.AccountType;
         req.AccountID = USERINFO.AccountID;
+        req.EstateID = USERINFO.EstateID;
         pageIndex = 1;
 
         //请求网络数据
