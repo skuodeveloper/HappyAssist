@@ -26,7 +26,7 @@ import java.util.Map;
 public class AfterSaleActivity extends Activity {
     public static GoodsInfo goodsInfo;
     public static GoodsList goodsList;
-    int test = 0;
+
     View.OnClickListener hander = new View.OnClickListener() {
         public void onClick(View v) {
             Map<String, String> params = new HashMap<String, String>();
