@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.skuo.happyassist.Activity.HousekeepDispatchActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/bg_White"
+        android:orientation="vertical">
+
+        <include layout="@layout/top_menu_back_1" />
+
+        <LinearLayout
+            android:id="@+id/ll_view1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="150dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:layout_marginTop="10dp"
+                android:text="服务人员： "
+                android:textColor="@color/tv_Black"
+                android:textSize="20dp" />
+
+            <EditText
+                android:id="@+id/et_Staff"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:hint="请输入服务人员名字"
+                android:textColor="@color/tv_Black"
+                android:textSize="20dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:layout_marginTop="10dp"
+                android:text="手机号码： "
+                android:textColor="@color/tv_Black"
+                android:textSize="20dp" />
+
+            <EditText
+                android:id="@+id/et_StaffTel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:hint="请输入服务人员电话号码"
+                android:textColor="@color/tv_Black"
+                android:textSize="20dp" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btnDispatch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="50dp"
+            android:text="分派" />
+    </LinearLayout>
+</RelativeLayout>

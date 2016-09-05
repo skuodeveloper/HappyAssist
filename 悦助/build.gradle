@@ -1,0 +1,52 @@
+apply plugin: 'com.android.application'
+
+def getTime() {
+    return new Date().format("yyyyMMdd", TimeZone.getDefault());
+}
+
+android {
+    compileSdkVersion 23
+    buildToolsVersion "23.0.3"
+
+    defaultConfig {
+        applicationId "com.example.skuo.happyassist"
+        minSdkVersion 11
+        targetSdkVersion 18
+        versionCode 1
+        versionName "1.0.1"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    //打包后应用名称
+    applicationVariants.all { variant ->
+        variant.outputs.each { output ->
+            def outputFile = output.outputFile
+            def fileName
+            if (outputFile != null && outputFile.name.endsWith('.apk')) {
+                if (variant.buildType.name.equals('release')) {
+                    fileName = "YUEZHU_${defaultConfig.versionName}.apk"
+                } else if (variant.buildType.name.equals('debug')) {
+                    ///fileName = "DEBUG${defaultConfig.versionName}.${getTime()}.apk"
+                    fileName = "YUEZHU_${defaultConfig.versionName}.apk"
+                }
+                output.outputFile = new File(outputFile.parent, fileName)
+            }
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    testCompile 'junit:junit:4.12'
+    compile files('libs/fastjson-1.2.2.jar')
+    compile files('libs/universal-image-loader-1.8.4-with-sources.jar')
+    compile 'com.android.support:appcompat-v7:23.4.0'
+    compile 'com.android.support:design:23.4.0'
+    compile 'com.android.support:support-v4:23.4.0'
+    compile files('libs/jpush-sdk-release1.5.2.jar')
+}

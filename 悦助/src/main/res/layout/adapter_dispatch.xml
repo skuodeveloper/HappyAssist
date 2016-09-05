@@ -1,0 +1,32 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal">
+
+    <RadioButton
+        android:id="@+id/radio_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginTop="5dp" />
+
+    <TextView
+        android:id="@+id/trueName"
+        android:layout_width="0dp"
+        android:layout_height="45dp"
+        android:layout_marginTop="5dp"
+        android:layout_weight="5"
+        android:gravity="center"
+        android:text="一般管理员"
+        android:textColor="@color/bg_Black"
+        android:textSize="16dp" />
+
+    <ImageView
+        android:id="@+id/iv_call"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="5dp"
+        android:scaleType="fitXY"
+        android:src="@drawable/call" />
+</LinearLayout>

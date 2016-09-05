@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:imagecontrol="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/top_menu_back_1" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/bg_Gray" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_marginTop="20dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30dp"
+            android:layout_weight="3"
+            android:gravity="left"
+            android:text="头像"
+            android:textColor="@color/bg_Black"
+            android:textSize="20dp" />
+
+        <!--<ImageView-->
+        <!--android:id="@+id/imageView"-->
+        <!--android:layout_width="0dp"-->
+        <!--android:layout_height="100dp"-->
+        <!--android:layout_weight="2.5"-->
+        <!--android:layout_marginLeft="30dp"-->
+        <!--android:scaleType="fitXY"-->
+        <!--android:layout_gravity="center_horizontal"-->
+        <!--android:src="@drawable/photo" />-->
+
+        <!-- 没有指定圆形ImageView属性时，默认没有外边圆颜色 -->
+        <!-- 需要将图片资源自定为src ，或在程序中setImageResource(res) 不能设置background为图片，这样不能达到圆形效果-->
+        <!--<com.example.skuo.happyassist.Javis.MyView.MyImageView-->
+        <!--android:layout_width="100dp"-->
+        <!--android:layout_height="100dp"-->
+        <!--android:src="@drawable/img"-->
+        <!--/>-->
+
+        <!-- border_outside_color 外部圆圈的颜色 -->
+        <!-- border_inside_color 内部部圆圈的颜色 -->
+        <!-- border_thickness 外圆和内圆的宽度 -->
+        <com.example.skuo.happyassist.Javis.MyView.MyImageView
+            android:id="@+id/imageView"
+            android:layout_width="0dp"
+            android:layout_height="100dp"
+            android:layout_marginRight="50dp"
+            android:layout_weight="2.5"
+            android:src="@drawable/head"
+            imagecontrol:border_inside_color="@color/brown"
+            imagecontrol:border_outside_color="@color/brown"
+            imagecontrol:border_thickness="1dp" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_marginTop="15dp"
+        android:background="@color/bg_Gray" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30dp"
+            android:layout_weight="3"
+            android:gravity="left"
+            android:text="名字"
+            android:textColor="@color/bg_Black"
+            android:textSize="20dp" />
+
+        <TextView
+            android:id="@+id/tv_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="50dp"
+            android:layout_weight="3"
+            android:gravity="center"
+            android:textColor="@color/bg_Black"
+            android:textSize="20dp" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_marginTop="15dp"
+        android:background="@color/bg_Gray" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30dp"
+            android:layout_weight="2"
+            android:gravity="left"
+            android:text="电话"
+            android:textColor="@color/bg_Black"
+            android:textSize="20dp" />
+
+        <TextView
+            android:id="@+id/tv_phone"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="4"
+            android:gravity="center"
+            android:textColor="@color/bg_Black"
+            android:textSize="20dp" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_marginTop="15dp"
+        android:background="@color/bg_Gray" />
+
+    <Button
+        android:id="@+id/btnLogout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="80dp"
+        android:text="退出登录" />
+
+    <Button
+        android:id="@+id/btnSave"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="10dp"
+        android:text="保存设置" />
+
+</LinearLayout>

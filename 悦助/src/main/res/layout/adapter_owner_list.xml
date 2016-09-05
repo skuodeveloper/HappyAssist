@@ -1,0 +1,114 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin">
+
+        <TextView
+            android:id="@+id/tv_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_weight="2"
+            android:text="冯雪峰"
+            android:textSize="16dp" />
+
+        <ImageView
+            android:id="@+id/iv_call"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="5dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/call" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginTop="8dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tv_address"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:text="嘉兴巴黎都市奥赛宫1幢2单元302"
+            android:textSize="16dp" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginLeft="15dp"
+                android:gravity="right"
+                android:text="未认证"
+                android:textSize="16dp" />
+
+            <TextView
+                android:id="@+id/tv_authen"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginLeft="15dp"
+                android:gravity="right"
+                android:text="立即认证"
+                android:textColor="@color/red"
+                android:textSize="18dp"
+                android:visibility="gone" />
+        </LinearLayout>
+        <!--<TextView-->
+        <!--android:id="@+id/tv_status"-->
+        <!--android:layout_width="0dp"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_marginRight="20dp"-->
+        <!--android:layout_weight="1"-->
+        <!--android:gravity="right"-->
+        <!--android:text="已认证"-->
+        <!--android:textSize="16dp" />-->
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginTop="8dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="最近一次登录"
+            android:textSize="16dp" />
+
+        <TextView
+            android:id="@+id/tv_logintime"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="20dp"
+            android:layout_weight="1"
+            android:gravity="right"
+            android:text="2016-06-20 16:01:00"
+            android:textSize="16dp" />
+    </LinearLayout>
+
+    <ImageView
+        android:layout_width="fill_parent"
+        android:layout_height="2dp"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/line" />
+</LinearLayout>
