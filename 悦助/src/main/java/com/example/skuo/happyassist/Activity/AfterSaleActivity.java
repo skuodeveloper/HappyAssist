@@ -24,19 +24,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class AfterSaleActivity extends Activity {
-    private ImageView iv_back;
-    private Button btnAgree,btnRefuse;
     public static GoodsInfo goodsInfo;
     public static GoodsList goodsList;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_after_sale);
-
-        initView();
-    }
-
+    int test = 0;
     View.OnClickListener hander = new View.OnClickListener() {
         public void onClick(View v) {
             Map<String, String> params = new HashMap<String, String>();
@@ -61,6 +51,44 @@ public class AfterSaleActivity extends Activity {
             }
         }
     };
+    private ImageView iv_back;
+    private Button btnAgree, btnRefuse;
+
+    /**
+     * 从服务器取图片
+     *
+     * @param url
+     * @return
+     */
+    public static Bitmap getHttpBitmap(String url) {
+        URL myFileUrl = null;
+        Bitmap bitmap = null;
+        try {
+            myFileUrl = new URL(url);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        try {
+            HttpURLConnection conn = (HttpURLConnection) myFileUrl.openConnection();
+            conn.setConnectTimeout(0);
+            conn.setDoInput(true);
+            conn.connect();
+            InputStream is = conn.getInputStream();
+            bitmap = BitmapFactory.decodeStream(is);
+            is.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return bitmap;
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_after_sale);
+
+        initView();
+    }
 
     private void initView() {
         ((TextView) findViewById(R.id.tv_top_title)).setText("售后详情");
@@ -130,33 +158,5 @@ public class AfterSaleActivity extends Activity {
 
         TextView quantity = (TextView) findViewById(R.id.quantity);
         quantity.setText("数量：" + goodsInfo.Quantity);
-    }
-
-    /**
-     * 从服务器取图片
-     *
-     * @param url
-     * @return
-     */
-    public static Bitmap getHttpBitmap(String url) {
-        URL myFileUrl = null;
-        Bitmap bitmap = null;
-        try {
-            myFileUrl = new URL(url);
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
-        try {
-            HttpURLConnection conn = (HttpURLConnection) myFileUrl.openConnection();
-            conn.setConnectTimeout(0);
-            conn.setDoInput(true);
-            conn.connect();
-            InputStream is = conn.getInputStream();
-            bitmap = BitmapFactory.decodeStream(is);
-            is.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return bitmap;
     }
 }
