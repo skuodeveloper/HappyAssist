@@ -41,48 +41,31 @@ public class HouseKeepOrdersActivity extends Activity {
     private static final int CLOSE_WAIT_DIALOG = 4;
     private static final int LAST_PAGE_ALREADY = 5;
     private static final int JUMP_TO_DETAIL = 6;
-
+    public static int ActionType = 0;
+    protected Context mContext;
     private ImageView iv_back, iv_refresh;
     private TextView bt_all, bt_waiting, bt_processing, bt_completed;
     private View show_all, show_waitting, show_processing, show_completed;
-
     private Adapter_housekeep_order rep_Adapter;
     private MyCustomListView GroupList;//自定义ListView
-
-    protected Context mContext;
     private ProgressDialog dialog = null;
     private boolean adddata = false;//记录是否累加
     /**
      * 加载数据条数
      */
     private int TotalCount = 0;
-
     /**
      * 请求数据的页数
      */
     private int pageIndex = 1;
-
     /**
      * 请求条件
      */
     private RequestParam req = null;
-
     /**
      * 当前页面状态
      */
     private int currentStatus = 0;
-
-    /**
-     * 存储网络返回的数据
-     */
-    private HashMap<String, Object> hashMap;
-    /**
-     * 存储网络返回的数据中的data字段
-     */
-    private ArrayList<HashMap<String, Object>> arrayList = new ArrayList<HashMap<String, Object>>();
-
-    public static int ActionType = 0;
-
     View.OnClickListener hander = new View.OnClickListener() {
         public void onClick(View v) {
             switch (v.getId()) {
@@ -138,14 +121,65 @@ public class HouseKeepOrdersActivity extends Activity {
             }
         }
     };
+    /**
+     * 存储网络返回的数据
+     */
+    private HashMap<String, Object> hashMap;
+    /**
+     * 存储网络返回的数据中的data字段
+     */
+    private ArrayList<HashMap<String, Object>> arrayList = new ArrayList<HashMap<String, Object>>();
+    /*
+      handle
+    */
+    private Handler myHandler = new Handler() {
 
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what) {
+                case REFRESH_DATA_FINISH:
+                    rep_Adapter.notifyDataSetChanged();
+                    GroupList.onRefreshComplete();    //下拉刷新完成
+                    break;
+                case LOAD_DATA_FINISH:
+                    rep_Adapter.notifyDataSetChanged();
+                    GroupList.onLoadMoreComplete();    //加载更多完成
+                    break;
+                case OPEN_WAIT_DIALOG:
+                    openDialog();
+                    break;
+                case CLOSE_WAIT_DIALOG:
+                    closeDialog();
+                    break;
+                case LAST_PAGE_ALREADY:
+                    Toast.makeText(mContext, "已经最后一页了", Toast.LENGTH_SHORT).show();
+                    break;
+                case JUMP_TO_DETAIL:
+                    try {
+                        Intent intent = new Intent(mContext, HouseKeepDetailActivity.class);
+
+                        HouseKeepInfo hkInfo = (HouseKeepInfo) msg.obj;
+                        intent.putExtra("Infos", hkInfo);
+
+                        startActivityForResult(intent, JUMP_TO_DETAIL);
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_housekeep_order);
-        mContext = this;
 
+        req = new RequestParam();
+        mContext = this;
         initView();
     }
 
@@ -210,7 +244,6 @@ public class HouseKeepOrdersActivity extends Activity {
         reSearch(currentStatus);
     }
 
-
     /*
    上下拉刷新加载数据方法
  */
@@ -257,50 +290,6 @@ public class HouseKeepOrdersActivity extends Activity {
         }.start();
     }
 
-    /*
-      handle
-    */
-    private Handler myHandler = new Handler() {
-
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            switch (msg.what) {
-                case REFRESH_DATA_FINISH:
-                    rep_Adapter.notifyDataSetChanged();
-                    GroupList.onRefreshComplete();    //下拉刷新完成
-                    break;
-                case LOAD_DATA_FINISH:
-                    rep_Adapter.notifyDataSetChanged();
-                    GroupList.onLoadMoreComplete();    //加载更多完成
-                    break;
-                case OPEN_WAIT_DIALOG:
-                    openDialog();
-                    break;
-                case CLOSE_WAIT_DIALOG:
-                    closeDialog();
-                    break;
-                case LAST_PAGE_ALREADY:
-                    Toast.makeText(mContext, "已经最后一页了", Toast.LENGTH_SHORT).show();
-                    break;
-                case JUMP_TO_DETAIL:
-                    try {
-                        Intent intent = new Intent(mContext, HouseKeepDetailActivity.class);
-
-                        HouseKeepInfo hkInfo = (HouseKeepInfo) msg.obj;
-                        intent.putExtra("Infos", hkInfo);
-
-                        startActivityForResult(intent, JUMP_TO_DETAIL);
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                    }
-                    break;
-                default:
-                    break;
-            }
-        }
-    };
-
     /**
      * 打开等待进度条
      */
@@ -327,11 +316,11 @@ public class HouseKeepOrdersActivity extends Activity {
      * @param status
      */
     private void reSearch(int status) {
-        req = new RequestParam();
+        //req = new RequestParam();
         req.page = 1;
         req.Status = status;
         req.pageSize = PAGESIZE;
-        req.EstateID = USERINFO.EstateID;
+        //req.EstateID = USERINFO.EstateID;
         req.AccountType = USERINFO.AccountType;
         req.AccountID = USERINFO.AccountID;
         req.PropertyID = USERINFO.PropertyID;
@@ -341,6 +330,38 @@ public class HouseKeepOrdersActivity extends Activity {
 
         //请求网络数据
         new WareTask().execute();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case REQUEST_FILTER_CODE:
+                if (data != null) {
+                    req = new RequestParam();
+                    req.AccountID = USERINFO.AccountID;
+                    req.AccountType = USERINFO.AccountType;
+                    req.PropertyID = USERINFO.PropertyID;
+                    req.EstateID = data.getIntExtra("EstateID", 0);
+                    req.StartDate = data.getStringExtra("StartDate");
+                    req.EndDate = data.getStringExtra("EndDate");
+                    req.pageSize = PAGESIZE;
+                    req.page = pageIndex;
+                    req.Status = currentStatus;
+                    req.UserName = "";
+
+                    //请求网络数据
+                    new WareTask().execute();
+                }
+                break;
+            case JUMP_TO_DETAIL:
+                if (ActionType == 1) {
+                    ActionType = 0;
+                    reSearch(currentStatus);
+                }
+                break;
+            default:
+                break;
+        }
     }
 
     private class WareTask extends AsyncTask<Void, Void, HashMap<String, Object>> {
@@ -391,38 +412,6 @@ public class HouseKeepOrdersActivity extends Activity {
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch (requestCode) {
-            case REQUEST_FILTER_CODE:
-                if (data != null) {
-                    req = new RequestParam();
-                    req.AccountID = USERINFO.AccountID;
-                    req.AccountType = USERINFO.AccountType;
-                    req.PropertyID = USERINFO.PropertyID;
-                    req.EstateID = data.getIntExtra("EstateID", 0);
-                    req.StartDate = data.getStringExtra("StartDate");
-                    req.EndDate = data.getStringExtra("EndDate");
-                    req.pageSize = PAGESIZE;
-                    req.page = pageIndex;
-                    req.Status = currentStatus;
-                    req.UserName = "";
-
-                    //请求网络数据
-                    new WareTask().execute();
-                }
-                break;
-            case JUMP_TO_DETAIL:
-                if (ActionType == 1) {
-                    ActionType = 0;
-                    reSearch(currentStatus);
-                }
-                break;
-            default:
-                break;
         }
     }
 }

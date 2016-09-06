@@ -338,7 +338,7 @@ public class OwnerInquiryActivity extends AppCompatActivity {
                     req.BuildingID = data.getIntExtra("BuildingID", 0);
                     req.CellID = data.getIntExtra("CellID", 0);
                     req.HouseID = data.getIntExtra("HouseID", 0);
-                    req.Phone = "";
+                    req.Phone = data.getStringExtra("Phone");
 
                     //请求网络数据
                     new WareTask().execute();

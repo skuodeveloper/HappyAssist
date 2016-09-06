@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -45,6 +46,7 @@ public class OwnerFilterActivity extends Activity {
     private Context mContext;
     private ImageView iv_back;
     private Button btnReset, btnOk;
+    private EditText et_Phone;
     private Spinner sp_Estate, sp_Group, sp_Building, sp_Cell, sp_Room;
 
     Handler handler = new Handler() {
@@ -188,21 +190,6 @@ public class OwnerFilterActivity extends Activity {
             }
         }
     };
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        mContext = this;
-        setContentView(R.layout.activity_owner_filter);
-
-        initView();
-
-        MyThread myThread = new MyThread();
-        myThread.setRequestCode(REQUEST_ESTATE_LIST);
-        Thread thread = new Thread(myThread);
-        thread.start();
-    }
-
     View.OnClickListener hander = new View.OnClickListener() {
         public void onClick(View v) {
             switch (v.getId()) {
@@ -222,23 +209,42 @@ public class OwnerFilterActivity extends Activity {
                     intent.putExtra("EstateID", estateInfo.GetID());
 
                     GroupInfo groupInfo = (GroupInfo) sp_Group.getSelectedItem();
-                    intent.putExtra("GroupID", groupInfo.GetID());
+                    int GroupID = (groupInfo == null) ? 0 : groupInfo.GetID();
+                    intent.putExtra("GroupID", GroupID);
 
                     BuildingInfo buildingInfo = (BuildingInfo) sp_Building.getSelectedItem();
-                    intent.putExtra("BuildingID", buildingInfo.GetID());
+                    int BuildingID = (buildingInfo == null) ? 0 : buildingInfo.GetID();
+                    intent.putExtra("BuildingID", BuildingID);
 
                     CellInfo cellInfo = (CellInfo) sp_Cell.getSelectedItem();
-                    intent.putExtra("CellID", cellInfo.GetID());
+                    int CellID = (cellInfo == null) ? 0 : cellInfo.GetID();
+                    intent.putExtra("CellID", CellID);
 
                     HouseInfo houseInfo = (HouseInfo) sp_Room.getSelectedItem();
-                    intent.putExtra("HouseID", houseInfo.GetID());
+                    int HouseID = (houseInfo == null) ? 0 : houseInfo.GetID();
+                    intent.putExtra("HouseID", HouseID);
 
+                    intent.putExtra("Phone", et_Phone.getText().toString());
                     setResult(RESULT_OK, intent);
                     finish();
                     break;
             }
         }
     };
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mContext = this;
+        setContentView(R.layout.activity_owner_filter);
+
+        initView();
+
+        MyThread myThread = new MyThread();
+        myThread.setRequestCode(REQUEST_ESTATE_LIST);
+        Thread thread = new Thread(myThread);
+        thread.start();
+    }
 
     private void initView() {
         ((TextView) findViewById(R.id.tv_top_title)).setText("筛选");
@@ -248,6 +254,8 @@ public class OwnerFilterActivity extends Activity {
 
         btnReset = (Button) findViewById(R.id.btnReset);
         btnReset.setOnClickListener(hander);
+
+        et_Phone = (EditText) findViewById(R.id.et_phone);
 
         btnOk = (Button) findViewById(R.id.btnOk);
         btnOk.setOnClickListener(hander);

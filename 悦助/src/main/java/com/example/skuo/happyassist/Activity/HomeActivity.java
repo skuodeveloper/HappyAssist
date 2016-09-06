@@ -46,23 +46,72 @@ import cn.jpush.android.api.TagAliasCallback;
  * @Description:主页
  */
 public class HomeActivity extends Activity {
-    private ImageView imageView;
-    private final static int IMAGE_REQUEST_CODE = 1;
-    private final static int REQUEST_SHOW_IMAGE = 2;
-    /**
-     * 存储网络返回的数据
-     */
-    private HashMap<String, Object> hashMap;
-
-
-    public static boolean isForeground = false;
-    private MessageReceiver mMessageReceiver;
     public static final String MESSAGE_RECEIVED_ACTION = "com.example.jpushdemo.MESSAGE_RECEIVED_ACTION";
     public static final String KEY_TITLE = "title";
     public static final String KEY_MESSAGE = "message";
     public static final String KEY_EXTRAS = "extras";
-
+    private final static int IMAGE_REQUEST_CODE = 1;
+    private final static int REQUEST_SHOW_IMAGE = 2;
+    public static boolean isForeground = false;
     TagAliasCallback callback = null;
+    private ImageView imageView;
+    /**
+     * 存储网络返回的数据
+     */
+    private HashMap<String, Object> hashMap;
+    private MessageReceiver mMessageReceiver;
+    /*
+      handle
+    */
+    private Handler myHandler = new Handler() {
+
+        @Override
+        public void handleMessage(Message msg) {
+            try {
+                super.handleMessage(msg);
+                switch (msg.what) {
+                    case REQUEST_SHOW_IMAGE:
+                        UserImage userImage = (UserImage) msg.obj;
+
+                        if (userImage.Data != null)
+                            imageView.setImageBitmap(getHttpBitmap(userImage.Data));
+                        break;
+                    default:
+                        break;
+                }
+            } catch (Exception ex) {
+                Toast.makeText(HomeActivity.this, ex.getMessage().toString(), Toast.LENGTH_SHORT);
+            }
+        }
+    };
+
+    /**
+     * 从服务器取图片
+     *
+     * @param url
+     * @return
+     */
+    public static Bitmap getHttpBitmap(String url) {
+        URL myFileUrl = null;
+        Bitmap bitmap = null;
+        try {
+            myFileUrl = new URL(url);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        try {
+            HttpURLConnection conn = (HttpURLConnection) myFileUrl.openConnection();
+            conn.setConnectTimeout(0);
+            conn.setDoInput(true);
+            conn.connect();
+            InputStream is = conn.getInputStream();
+            bitmap = BitmapFactory.decodeStream(is);
+            is.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return bitmap;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,7 +147,7 @@ public class HomeActivity extends Activity {
             @Override
             public void gotResult(int statusCode, String s, Set<String> set) {
                 Log.i("JPush", "Jpush status: " + statusCode);//状态
-                switch (statusCode){
+                switch (statusCode) {
                     case 6001:
                         break;
                     case 6002://超时
@@ -110,31 +159,6 @@ public class HomeActivity extends Activity {
 
         JPushInterface.setAliasAndTags(this, alias, tags, callback);
     }
-
-    /*
-      handle
-    */
-    private Handler myHandler = new Handler() {
-
-        @Override
-        public void handleMessage(Message msg) {
-            try {
-                super.handleMessage(msg);
-                switch (msg.what) {
-                    case REQUEST_SHOW_IMAGE:
-                        UserImage userImage = (UserImage) msg.obj;
-
-                        if (userImage.Data != null)
-                            imageView.setImageBitmap(getHttpBitmap(userImage.Data));
-                        break;
-                    default:
-                        break;
-                }
-            } catch (Exception ex) {
-                Toast.makeText(HomeActivity.this, ex.getMessage().toString(), Toast.LENGTH_SHORT);
-            }
-        }
-    };
 
     private void initView() {
         MyGridView gridview;
@@ -162,17 +186,26 @@ public class HomeActivity extends Activity {
                         if (USERINFO.AccountType == 2 || USERINFO.AccountType == 5) {
                             intent = new Intent(HomeActivity.this, RepairOrdersActivity.class);
                             startActivity(intent);
+                        } else {
+                            Toast.makeText(HomeActivity.this, "该功能只对物业管理员和小区管理员开放!", Toast.LENGTH_SHORT).show();
                         }
                         break;
                     case 1:
-                        intent = new Intent(HomeActivity.this, MyOrdersActivity.class);
-                        startActivity(intent);
+                        //物业管理员或小区管理员不能进入
+                        if (USERINFO.AccountType == 2 || USERINFO.AccountType == 5) {
+                            Toast.makeText(HomeActivity.this, "该功能只对一般管理员开放!", Toast.LENGTH_SHORT).show();
+                        } else {
+                            intent = new Intent(HomeActivity.this, MyOrdersActivity.class);
+                            startActivity(intent);
+                        }
                         break;
                     case 2:
                         //物业管理员或小区管理员可以进入
                         if (USERINFO.AccountType == 2 || USERINFO.AccountType == 5) {
                             intent = new Intent(HomeActivity.this, ComplaintOrdersActivity.class);
                             startActivity(intent);
+                        } else {
+                            Toast.makeText(HomeActivity.this, "该功能只对物业管理员和小区管理员开放!", Toast.LENGTH_SHORT).show();
                         }
                         break;
                     case 3:
@@ -229,6 +262,35 @@ public class HomeActivity extends Activity {
         }
     }
 
+    /**
+     * 一下均为极光推送代码
+     */
+    public void registerMessageReceiver() {
+        mMessageReceiver = new MessageReceiver();
+        IntentFilter filter = new IntentFilter();
+        filter.setPriority(IntentFilter.SYSTEM_HIGH_PRIORITY);
+        filter.addAction(MESSAGE_RECEIVED_ACTION);
+        registerReceiver(mMessageReceiver, filter);
+    }
+
+    @Override
+    protected void onResume() {
+        isForeground = true;
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        isForeground = false;
+        super.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        unregisterReceiver(mMessageReceiver);
+        super.onDestroy();
+    }
+
     private class WareTask extends AsyncTask<Void, Void, HashMap<String, Object>> {
         @Override
         protected HashMap<String, Object> doInBackground(Void... arg0) {
@@ -262,45 +324,6 @@ public class HomeActivity extends Activity {
         }
     }
 
-    /**
-     * 从服务器取图片
-     *
-     * @param url
-     * @return
-     */
-    public static Bitmap getHttpBitmap(String url) {
-        URL myFileUrl = null;
-        Bitmap bitmap = null;
-        try {
-            myFileUrl = new URL(url);
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
-        try {
-            HttpURLConnection conn = (HttpURLConnection) myFileUrl.openConnection();
-            conn.setConnectTimeout(0);
-            conn.setDoInput(true);
-            conn.connect();
-            InputStream is = conn.getInputStream();
-            bitmap = BitmapFactory.decodeStream(is);
-            is.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return bitmap;
-    }
-
-    /**
-     * 一下均为极光推送代码
-     */
-    public void registerMessageReceiver() {
-        mMessageReceiver = new MessageReceiver();
-        IntentFilter filter = new IntentFilter();
-        filter.setPriority(IntentFilter.SYSTEM_HIGH_PRIORITY);
-        filter.addAction(MESSAGE_RECEIVED_ACTION);
-        registerReceiver(mMessageReceiver, filter);
-    }
-
     public class MessageReceiver extends BroadcastReceiver {
 
         @Override
@@ -317,26 +340,6 @@ public class HomeActivity extends Activity {
             }
         }
 
-    }
-
-    @Override
-    protected void onResume() {
-        isForeground = true;
-        super.onResume();
-    }
-
-
-    @Override
-    protected void onPause() {
-        isForeground = false;
-        super.onPause();
-    }
-
-
-    @Override
-    protected void onDestroy() {
-        unregisterReceiver(mMessageReceiver);
-        super.onDestroy();
     }
 
 
