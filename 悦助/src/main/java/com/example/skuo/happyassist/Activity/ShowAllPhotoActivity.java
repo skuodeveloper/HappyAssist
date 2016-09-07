@@ -33,9 +33,18 @@ import java.util.ArrayList;
  * @QQ:595163260
  */
 public class ShowAllPhotoActivity extends Activity {
+    public static ArrayList<ImageItem> dataList = new ArrayList<ImageItem>();
     private GridView gridView;
     private ProgressBar progressBar;
     private Adapter_AlbumGrid_View gridImageAdapter;
+    BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            // TODO Auto-generated method stub
+            gridImageAdapter.notifyDataSetChanged();
+        }
+    };
     // 完成按钮
     private Button okButton;
     // 预览按钮
@@ -48,7 +57,6 @@ public class ShowAllPhotoActivity extends Activity {
     private TextView headTitle;
     private Intent intent;
     private Context mContext;
-    public static ArrayList<ImageItem> dataList = new ArrayList<ImageItem>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,50 +81,6 @@ public class ShowAllPhotoActivity extends Activity {
         init();
         initListener();
         isShowOkBt();
-    }
-
-    BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            // TODO Auto-generated method stub  
-            gridImageAdapter.notifyDataSetChanged();
-        }
-    };
-
-    private class PreviewListener implements OnClickListener {
-        public void onClick(View v) {
-            if (Bimp.tempSelectBitmap.size() > 0) {
-                intent.putExtra("position", "2");
-                intent.setClass(ShowAllPhotoActivity.this, GalleryActivity.class);
-                startActivity(intent);
-            }
-        }
-
-    }
-
-    private class BackListener implements OnClickListener {// 返回按钮监听
-        Intent intent;
-
-        public BackListener(Intent intent) {
-            this.intent = intent;
-        }
-
-        public void onClick(View v) {
-            intent.setClass(ShowAllPhotoActivity.this, ImageFileActivity.class);
-            startActivity(intent);
-        }
-
-    }
-
-    private class CancelListener implements OnClickListener {// 取消按钮的监听
-
-        public void onClick(View v) {
-            //清空选择的图片
-            Bimp.tempSelectBitmap.clear();
-            intent.setClass(mContext, WorksheetHandleActivity.class);
-            startActivity(intent);
-        }
     }
 
     private void init() {
@@ -209,8 +173,8 @@ public class ShowAllPhotoActivity extends Activity {
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             this.finish();
-            intent.setClass(ShowAllPhotoActivity.this, ImageFileActivity.class);
-            startActivity(intent);
+            //intent.setClass(ShowAllPhotoActivity.this, ImageFileActivity.class);
+            //startActivity(intent);
         }
 
         return false;
@@ -222,6 +186,41 @@ public class ShowAllPhotoActivity extends Activity {
         // TODO Auto-generated method stub
         isShowOkBt();
         super.onRestart();
+    }
+
+    private class PreviewListener implements OnClickListener {
+        public void onClick(View v) {
+            if (Bimp.tempSelectBitmap.size() > 0) {
+                intent.putExtra("position", "2");
+                intent.setClass(ShowAllPhotoActivity.this, GalleryActivity.class);
+                startActivity(intent);
+            }
+        }
+
+    }
+
+    private class BackListener implements OnClickListener {// 返回按钮监听
+        Intent intent;
+
+        public BackListener(Intent intent) {
+            this.intent = intent;
+        }
+
+        public void onClick(View v) {
+            intent.setClass(ShowAllPhotoActivity.this, ImageFileActivity.class);
+            startActivity(intent);
+        }
+
+    }
+
+    private class CancelListener implements OnClickListener {// 取消按钮的监听
+
+        public void onClick(View v) {
+            //清空选择的图片
+            //Bimp.tempSelectBitmap.clear();
+            //setResult(RESULT_OK, intent);
+            finish();
+        }
     }
 
 }

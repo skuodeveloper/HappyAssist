@@ -10,10 +10,8 @@ import android.os.Handler;
 import android.os.Message;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -21,7 +19,6 @@ import android.widget.Toast;
 import com.alibaba.fastjson.JSON;
 import com.example.skuo.happyassist.Class.Result.Estate;
 import com.example.skuo.happyassist.Class.Result.EstateInfo;
-import com.example.skuo.happyassist.Class.Result.Status;
 import com.example.skuo.happyassist.Javis.Data.USERINFO;
 import com.example.skuo.happyassist.Javis.http.GetHttp;
 import com.example.skuo.happyassist.Javis.http.Interface;
@@ -37,12 +34,18 @@ public class ComplaintFilterActivity extends Activity {
     private final static int REQUEST_STATUS_LIST = 101;
     private final static int DATE_START = 1;
     private final static int DATE_END = 2;
-
+    private static int selectIndex = -1;
+    private static String etStart;
+    private static String etEnd;
+    Runnable r = new Runnable() {
+        public void run() {
+            Message message = new Message();
+            message.what = REQUEST_ESTATE_LIST;
+            handler.sendMessage(message);
+        }
+    };
     private Context mContext;
     private Spinner spin_estate, spin_status;
-    private EditText et_Start, et_End;
-    private Calendar c = null;
-
     Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -69,25 +72,10 @@ public class ComplaintFilterActivity extends Activity {
                         estAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                         //加载适配器
                         spin_estate.setAdapter(estAdapter);
-                        break;
-                    case REQUEST_STATUS_LIST:
-                        ArrayAdapter<Status> staAdapter;
-                        ArrayList<Status> stalist = new ArrayList<Status>();
-                        Status Sta = new Status(0, "全部工单");
-                        stalist.add(Sta);
-                        Sta = new Status(1, "待处理");
-                        stalist.add(Sta);
-                        Sta = new Status(2, "处理中");
-                        stalist.add(Sta);
-                        Sta = new Status(3, "已完成");
-                        stalist.add(Sta);
 
-                        //适配器
-                        staAdapter = new ArrayAdapter<Status>(mContext, android.R.layout.simple_spinner_item, stalist);
-                        //设置样式
-                        staAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                        //加载适配器
-                        spin_status.setAdapter(staAdapter);
+                        if (selectIndex != -1) {
+                            spin_estate.setSelection(selectIndex);
+                        }
                         break;
                 }
                 super.handleMessage(msg);
@@ -96,32 +84,7 @@ public class ComplaintFilterActivity extends Activity {
             }
         }
     };
-
-    Runnable r = new Runnable() {
-        public void run() {
-            Message message = new Message();
-            message.what = REQUEST_ESTATE_LIST;
-            handler.sendMessage(message);
-
-//            message = new Message();
-//            message.what = REQUEST_STATUS_LIST;
-//            handler.sendMessage(message);
-        }
-    };
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_complaint_filter);
-        mContext = this;
-
-        initView();
-
-        //请求网络数据
-        Thread thread = new Thread(r);
-        thread.start();
-    }
-
+    private EditText et_Start, et_End;
     View.OnClickListener hander = new View.OnClickListener() {
         public void onClick(View v) {
             switch (v.getId()) {
@@ -132,12 +95,12 @@ public class ComplaintFilterActivity extends Activity {
                     Intent intent = new Intent();
                     EstateInfo est = (EstateInfo) spin_estate.getSelectedItem();
                     intent.putExtra("EstateID", est.GetID());
-
-//                    Status sta = (Status) spin_status.getSelectedItem();
-//                    intent.putExtra("Status", sta.GetID());
-
                     intent.putExtra("StartDate", et_Start.getText().toString());
                     intent.putExtra("EndDate", et_End.getText().toString());
+
+                    selectIndex = spin_estate.getSelectedItemPosition();
+                    etStart = et_Start.getText().toString();
+                    etEnd = et_End.getText().toString();
 
                     setResult(RESULT_OK, intent);
                     finish();
@@ -156,20 +119,35 @@ public class ComplaintFilterActivity extends Activity {
             }
         }
     };
+    private Calendar c = null;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_complaint_filter);
+        mContext = this;
+
+        initView();
+
+        //请求网络数据
+        Thread thread = new Thread(r);
+        thread.start();
+    }
 
     private void initView() {
         ((TextView) findViewById(R.id.tv_top_title)).setText("过滤");
 
         spin_estate = (Spinner) findViewById(R.id.spin_estate);
-//        spin_status = (Spinner) findViewById(R.id.spin_status);
         et_Start = (EditText) findViewById(R.id.et_Start);
+        et_Start.setText(etStart);
         et_End = (EditText) findViewById(R.id.et_End);
+        et_End.setText(etEnd);
 
-        ((Button) findViewById(R.id.btnDone)).setOnClickListener(hander);
-        ((Button) findViewById(R.id.btnReset)).setOnClickListener(hander);
-        ((ImageView) findViewById(R.id.iv_back)).setOnClickListener(hander);
-        ((ImageView) findViewById(R.id.dateStart)).setOnClickListener(hander);
-        ((ImageView) findViewById(R.id.dateEnd)).setOnClickListener(hander);
+        findViewById(R.id.btnDone).setOnClickListener(hander);
+        findViewById(R.id.btnReset).setOnClickListener(hander);
+        findViewById(R.id.iv_back).setOnClickListener(hander);
+        findViewById(R.id.dateStart).setOnClickListener(hander);
+        findViewById(R.id.dateEnd).setOnClickListener(hander);
     }
 
     /**

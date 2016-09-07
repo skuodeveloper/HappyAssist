@@ -38,12 +38,23 @@ import java.util.List;
  * @QQ:595163260
  */
 public class AlbumActivity extends Activity {
+    public static List<ImageBucket> contentList;
+    public static Bitmap bitmap;
     //显示手机里的所有图片的列表控件
     private GridView gridView;
     //当手机里没有图片时，提示用户没有图片的控件
     private TextView tv;
     //gridView的adapter
     private Adapter_AlbumGrid_View gridImageAdapter;
+    BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            //mContext.unregisterReceiver(this);
+            // TODO Auto-generated method stub
+            gridImageAdapter.notifyDataSetChanged();
+        }
+    };
     //完成按钮
     private Button okButton;
     // 返回按钮
@@ -56,13 +67,14 @@ public class AlbumActivity extends Activity {
     private Context mContext;
     private ArrayList<ImageItem> dataList;
     private AlbumHelper helper;
-    public static List<ImageBucket> contentList;
-    public static Bitmap bitmap;
+    private ArrayList<ImageItem> tempSelectBitmap = new ArrayList<ImageItem>();
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(Res.getLayoutID("plugin_camera_album"));
         PublicWay.activityList.add(this);
+
+        this.tempSelectBitmap.addAll(Bimp.tempSelectBitmap);
         mContext = this;
         //注册一个广播，这个广播主要是用于在GalleryActivity进行预览时，防止当所有图片都删除完后，再回到该页面时被取消选中的图片仍处于选中状态
         IntentFilter filter = new IntentFilter("data.broadcast.action");
@@ -74,57 +86,6 @@ public class AlbumActivity extends Activity {
         //这个函数主要用来控制预览和完成按钮的状态
         isShowOkBt();
     }
-
-    BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            //mContext.unregisterReceiver(this);
-            // TODO Auto-generated method stub  
-            gridImageAdapter.notifyDataSetChanged();
-        }
-    };
-
-    // 预览按钮的监听
-    private class PreviewListener implements OnClickListener {
-        public void onClick(View v) {
-            if (Bimp.tempSelectBitmap.size() > 0) {
-                intent.putExtra("position", "1");
-                intent.setClass(AlbumActivity.this, GalleryActivity.class);
-                startActivity(intent);
-            }
-        }
-
-    }
-
-    // 完成按钮的监听
-    private class AlbumSendListener implements OnClickListener {
-        public void onClick(View v) {
-            overridePendingTransition(R.anim.activity_translate_in, R.anim.activity_translate_out);
-            intent.setClass(mContext, WorksheetHandleActivity.class);
-            startActivity(intent);
-            finish();
-        }
-
-    }
-
-    // 返回按钮监听
-    private class BackListener implements OnClickListener {
-        public void onClick(View v) {
-            intent.setClass(AlbumActivity.this, ImageFileActivity.class);
-            startActivity(intent);
-        }
-    }
-
-    // 取消按钮的监听
-    private class CancelListener implements OnClickListener {
-        public void onClick(View v) {
-            Bimp.tempSelectBitmap.clear();
-            intent.setClass(mContext, WorksheetHandleActivity.class);
-            startActivity(intent);
-        }
-    }
-
 
     // 初始化，给一些对象赋值
     private void init() {
@@ -175,7 +136,9 @@ public class AlbumActivity extends Activity {
                         }
                         if (isChecked) {
                             chooseBt.setVisibility(View.VISIBLE);
+
                             Bimp.tempSelectBitmap.add(dataList.get(position));
+
                             okButton.setText(Res.getString("finish") + "(" + Bimp.tempSelectBitmap.size()
                                     + "/" + PublicWay.num + ")");
                         } else {
@@ -222,11 +185,14 @@ public class AlbumActivity extends Activity {
 
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            intent.setClass(AlbumActivity.this, ImageFileActivity.class);
-            startActivity(intent);
+
+            Bimp.tempSelectBitmap = tempSelectBitmap;
+            Bimp.max = Bimp.tempSelectBitmap.size();
+
+            setResult(RESULT_OK, intent);
+            finish();
         }
         return false;
-
     }
 
     @Override
@@ -239,5 +205,48 @@ public class AlbumActivity extends Activity {
     protected void onDestroy() {
         unregisterReceiver(broadcastReceiver);
         super.onDestroy();
+    }
+
+    // 预览按钮的监听
+    private class PreviewListener implements OnClickListener {
+        public void onClick(View v) {
+            if (Bimp.tempSelectBitmap.size() > 0) {
+                intent.putExtra("position", "1");
+                intent.setClass(AlbumActivity.this, GalleryActivity.class);
+                startActivity(intent);
+            }
+        }
+
+    }
+
+    // 完成按钮的监听
+    private class AlbumSendListener implements OnClickListener {
+        public void onClick(View v) {
+            overridePendingTransition(R.anim.activity_translate_in, R.anim.activity_translate_out);
+            //intent.setClass(mContext, WorksheetHandleActivity.class);
+            //startActivity(intent);
+            setResult(RESULT_OK, intent);
+            finish();
+        }
+
+    }
+
+    // 相册监听
+    private class BackListener implements OnClickListener {
+        public void onClick(View v) {
+            intent.setClass(AlbumActivity.this, ImageFileActivity.class);
+            startActivity(intent);
+        }
+    }
+
+    // 取消按钮的监听
+    private class CancelListener implements OnClickListener {
+        public void onClick(View v) {
+            Bimp.tempSelectBitmap = tempSelectBitmap;
+            Bimp.max = Bimp.tempSelectBitmap.size();
+
+            setResult(RESULT_OK, intent);
+            finish();
+        }
     }
 }

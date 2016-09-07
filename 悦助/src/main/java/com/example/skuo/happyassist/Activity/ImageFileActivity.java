@@ -3,7 +3,6 @@ package com.example.skuo.happyassist.Activity;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
@@ -13,7 +12,6 @@ import android.widget.GridView;
 import android.widget.TextView;
 
 import com.example.skuo.happyassist.Javis.Adapter.Adapter_Folder;
-import com.example.skuo.happyassist.Util.Bimp;
 import com.example.skuo.happyassist.Util.PublicWay;
 import com.example.skuo.happyassist.Util.Res;
 
@@ -45,24 +43,27 @@ public class ImageFileActivity extends Activity {
 		gridView.setAdapter(folderAdapter);
 	}
 
-	private class CancelListener implements OnClickListener {// 取消按钮的监听
-		public void onClick(View v) {
-			//清空选择的图片
-			Bimp.tempSelectBitmap.clear();
-			Intent intent = new Intent();
-			intent.setClass(mContext, WorksheetHandleActivity.class);
-			startActivity(intent);
-		}
-	}
-
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			Intent intent = new Intent();
-			intent.setClass(mContext, WorksheetHandleActivity.class);
-			startActivity(intent);
+//			Intent intent = new Intent();
+//			intent.setClass(mContext, WorksheetHandleActivity.class);
+//			startActivity(intent);
+			finish();
 		}
-		
+
 		return true;
+	}
+
+	private class CancelListener implements OnClickListener {// 取消按钮的监听
+
+		public void onClick(View v) {
+			//清空选择的图片
+//			Bimp.tempSelectBitmap.clear();
+//			Intent intent = new Intent();
+//			intent.setClass(mContext, WorksheetHandleActivity.class);
+//			startActivity(intent);
+			finish();
+		}
 	}
 
 }

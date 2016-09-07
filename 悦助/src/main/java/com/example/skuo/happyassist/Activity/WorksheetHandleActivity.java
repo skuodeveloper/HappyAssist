@@ -20,6 +20,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -46,10 +47,13 @@ import java.util.Map;
 
 public class WorksheetHandleActivity extends AppCompatActivity {
     private static final int TAKE_PICTURE = 1;
-    private static final int OPEN_WAIT_DIALOG = 2;
-    private static final int CLOSE_WAIT_DIALOG = 3;
-    private static final int REQUEST_DONE_CODE = 3;
-
+    private static final int TAKE_ALBUM = 2;
+    private static final int TAKE_Gallery = 3;
+    private static final int OPEN_WAIT_DIALOG = 4;
+    private static final int CLOSE_WAIT_DIALOG = 5;
+    public static Bitmap bimap;
+    public static int PrePage = 0;
+    private static String sRepairID, sRemark;
     private GridView noScrollgridview = null;
     private Adapter_Grid_View adapter;
     private View parentView;
@@ -57,10 +61,23 @@ public class WorksheetHandleActivity extends AppCompatActivity {
     private PopupWindow pop = null;
     private LinearLayout ll_popup;
     private ProgressDialog dialog = null;
+    Handler handler = new Handler() {
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case TAKE_PICTURE:
+                    adapter.notifyDataSetChanged();
+                    break;
+                case OPEN_WAIT_DIALOG:
+                    openDialog();
+                    break;
+                case CLOSE_WAIT_DIALOG:
+                    closeDialog();
+                    break;
+            }
+            super.handleMessage(msg);
+        }
+    };
     private EditText et_remark;
-    private static String sRepairID, sRemark;
-    public static Bitmap bimap;
-    public static int PrePage = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,23 +100,6 @@ public class WorksheetHandleActivity extends AppCompatActivity {
 
         initView();
     }
-
-    Handler handler = new Handler() {
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case TAKE_PICTURE:
-                    adapter.notifyDataSetChanged();
-                    break;
-                case OPEN_WAIT_DIALOG:
-                    openDialog();
-                    break;
-                case CLOSE_WAIT_DIALOG:
-                    closeDialog();
-                    break;
-            }
-            super.handleMessage(msg);
-        }
-    };
 
     public void update() {
         new Thread(new Runnable() {
@@ -137,7 +137,7 @@ public class WorksheetHandleActivity extends AppCompatActivity {
         pop.setOutsideTouchable(true);
         pop.setContentView(view);
 
-        ((Button) view.findViewById(R.id.item_popupwindows_camera)).setOnClickListener(new View.OnClickListener() {
+        view.findViewById(R.id.item_popupwindows_camera).setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 photo();
                 pop.dismiss();
@@ -145,17 +145,19 @@ public class WorksheetHandleActivity extends AppCompatActivity {
             }
         });
 
-        ((Button) view.findViewById(R.id.item_popupwindows_Photo)).setOnClickListener(new View.OnClickListener() {
+        view.findViewById(R.id.item_popupwindows_Photo).setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent intent = new Intent(WorksheetHandleActivity.this,
                         AlbumActivity.class);
-                startActivity(intent);
+                //startActivity(intent);
+                startActivityForResult(intent, TAKE_ALBUM);
+
                 overridePendingTransition(R.anim.activity_translate_in, R.anim.activity_translate_out);
                 pop.dismiss();
                 ll_popup.clearAnimation();
             }
         });
-        ((Button) view.findViewById(R.id.item_popupwindows_cancel)).setOnClickListener(new View.OnClickListener() {
+        view.findViewById(R.id.item_popupwindows_cancel).setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 pop.dismiss();
                 ll_popup.clearAnimation();
@@ -183,12 +185,16 @@ public class WorksheetHandleActivity extends AppCompatActivity {
                                     long arg3) {
                 if (arg2 == Bimp.tempSelectBitmap.size()) {
                     ll_popup.startAnimation(AnimationUtils.loadAnimation(WorksheetHandleActivity.this, R.anim.activity_translate_in));
+
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(et_remark.getWindowToken(), 0);
+
                     pop.showAtLocation(parentView, Gravity.BOTTOM, 0, 0);
                 } else {
                     Intent intent = new Intent(WorksheetHandleActivity.this, GalleryActivity.class);
                     intent.putExtra("position", "1");
                     intent.putExtra("ID", arg2);
-                    startActivity(intent);
+                    startActivityForResult(intent, TAKE_Gallery);
                 }
             }
         });
@@ -250,7 +256,6 @@ public class WorksheetHandleActivity extends AppCompatActivity {
         switch (requestCode) {
             case TAKE_PICTURE:
                 if (Bimp.tempSelectBitmap.size() < 9 && resultCode == RESULT_OK) {
-
                     String fileName = String.valueOf(System.currentTimeMillis());
                     Bitmap bm = (Bitmap) data.getExtras().get("data");
                     FileUtils.saveBitmap(bm, fileName);
@@ -258,6 +263,16 @@ public class WorksheetHandleActivity extends AppCompatActivity {
                     ImageItem takePhoto = new ImageItem();
                     takePhoto.setBitmap(bm);
                     Bimp.tempSelectBitmap.add(takePhoto);
+                    this.update();
+                }
+                break;
+            case TAKE_ALBUM:
+                if (Bimp.tempSelectBitmap.size() < 9 && resultCode == RESULT_OK) {
+                    this.update();
+                }
+                break;
+            case TAKE_Gallery:
+                if (Bimp.tempSelectBitmap.size() < 9 && resultCode == RESULT_OK) {
                     this.update();
                 }
                 break;
