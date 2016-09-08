@@ -149,7 +149,7 @@ public class WorksheetHandleActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(WorksheetHandleActivity.this,
                         AlbumActivity.class);
-                //startActivity(intent);
+
                 startActivityForResult(intent, TAKE_ALBUM);
 
                 overridePendingTransition(R.anim.activity_translate_in, R.anim.activity_translate_out);
