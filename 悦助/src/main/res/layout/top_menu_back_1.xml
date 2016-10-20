@@ -5,7 +5,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:background="@color/bg_Gray"
+        android:background="@color/darkgreen"
         android:orientation="horizontal">
 
         <ImageView
@@ -23,7 +23,7 @@
             android:layout_weight="4"
             android:gravity="center"
             android:text="标题"
-            android:textColor="@color/tv_Black"
+            android:textColor="@color/tv_White"
             android:textSize="20sp" />
 
         <ImageView
