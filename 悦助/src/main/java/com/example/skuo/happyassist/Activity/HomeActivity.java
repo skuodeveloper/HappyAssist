@@ -339,8 +339,5 @@ public class HomeActivity extends Activity {
                 //setCostomMsg(showMsg.toString());
             }
         }
-
     }
-
-
 }

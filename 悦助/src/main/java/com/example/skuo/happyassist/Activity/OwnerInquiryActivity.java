@@ -75,7 +75,12 @@ public class OwnerInquiryActivity extends AppCompatActivity {
                     startActivityForResult(intent, REQUEST_FILTER_CODE);
                     break;
                 case R.id.bt_all:
-                    show_all.setBackgroundColor(getResources().getColor(R.color.bg_Black));
+                    bt_all.setTextColor(getResources().getColor(R.color.darkgreen));
+                    bt_waiting.setTextColor(getResources().getColor(R.color.bg_Gray));
+                    bt_processing.setTextColor(getResources().getColor(R.color.bg_Gray));
+                    bt_completed.setTextColor(getResources().getColor(R.color.bg_Gray));
+
+                    show_all.setBackgroundColor(getResources().getColor(R.color.darkgreen));
                     show_waitting.setBackgroundColor(getResources().getColor(R.color.bg_Gray));
                     show_processing.setBackgroundColor(getResources().getColor(R.color.bg_Gray));
                     show_completed.setBackgroundColor(getResources().getColor(R.color.bg_Gray));
@@ -84,8 +89,13 @@ public class OwnerInquiryActivity extends AppCompatActivity {
                     reSearch();
                     break;
                 case R.id.bt_waiting:
+                    bt_all.setTextColor(getResources().getColor(R.color.bg_Gray));
+                    bt_waiting.setTextColor(getResources().getColor(R.color.darkgreen));
+                    bt_processing.setTextColor(getResources().getColor(R.color.bg_Gray));
+                    bt_completed.setTextColor(getResources().getColor(R.color.bg_Gray));
+
                     show_all.setBackgroundColor(getResources().getColor(R.color.bg_Gray));
-                    show_waitting.setBackgroundColor(getResources().getColor(R.color.bg_Black));
+                    show_waitting.setBackgroundColor(getResources().getColor(R.color.darkgreen));
                     show_processing.setBackgroundColor(getResources().getColor(R.color.bg_Gray));
                     show_completed.setBackgroundColor(getResources().getColor(R.color.bg_Gray));
 
@@ -93,19 +103,29 @@ public class OwnerInquiryActivity extends AppCompatActivity {
                     reSearch();
                     break;
                 case R.id.bt_processing:
+                    bt_all.setTextColor(getResources().getColor(R.color.bg_Gray));
+                    bt_waiting.setTextColor(getResources().getColor(R.color.bg_Gray));
+                    bt_processing.setTextColor(getResources().getColor(R.color.darkgreen));
+                    bt_completed.setTextColor(getResources().getColor(R.color.bg_Gray));
+
                     show_all.setBackgroundColor(getResources().getColor(R.color.bg_Gray));
                     show_waitting.setBackgroundColor(getResources().getColor(R.color.bg_Gray));
-                    show_processing.setBackgroundColor(getResources().getColor(R.color.bg_Black));
+                    show_processing.setBackgroundColor(getResources().getColor(R.color.darkgreen));
                     show_completed.setBackgroundColor(getResources().getColor(R.color.bg_Gray));
 
                     currentStatus = 2;
                     reSearch();
                     break;
                 case R.id.bt_completed:
+                    bt_all.setTextColor(getResources().getColor(R.color.bg_Gray));
+                    bt_waiting.setTextColor(getResources().getColor(R.color.bg_Gray));
+                    bt_processing.setTextColor(getResources().getColor(R.color.bg_Gray));
+                    bt_completed.setTextColor(getResources().getColor(R.color.darkgreen));
+
                     show_all.setBackgroundColor(getResources().getColor(R.color.bg_Gray));
                     show_waitting.setBackgroundColor(getResources().getColor(R.color.bg_Gray));
                     show_processing.setBackgroundColor(getResources().getColor(R.color.bg_Gray));
-                    show_completed.setBackgroundColor(getResources().getColor(R.color.bg_Black));
+                    show_completed.setBackgroundColor(getResources().getColor(R.color.darkgreen));
 
                     currentStatus = 3;
                     reSearch();

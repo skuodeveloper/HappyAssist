@@ -65,7 +65,8 @@ public class MallOrdersActivity extends FragmentActivity {
     /**
      * 请求条件
      */
-    private RequestParam req = null;
+    private RequestParam req = new RequestParam();
+    ;
 
     /**
      * 当前页面状态
@@ -94,8 +95,12 @@ public class MallOrdersActivity extends FragmentActivity {
                     startActivityForResult(intent, REQUEST_FILTER_CODE);
                     break;
                 case R.id.bt_all:
-                    ((TextView) findViewById(R.id.tv_top_title)).setText("全部订单");
-                    show_all.setBackgroundColor(getResources().getColor(R.color.bg_Black));
+                    bt_all.setTextColor(getResources().getColor(R.color.darkgreen));
+                    bt_waiting.setTextColor(getResources().getColor(R.color.bg_Gray));
+                    bt_processing.setTextColor(getResources().getColor(R.color.bg_Gray));
+                    bt_completed.setTextColor(getResources().getColor(R.color.bg_Gray));
+
+                    show_all.setBackgroundColor(getResources().getColor(R.color.darkgreen));
                     show_waitting.setBackgroundColor(getResources().getColor(R.color.bg_Gray));
                     show_processing.setBackgroundColor(getResources().getColor(R.color.bg_Gray));
                     show_completed.setBackgroundColor(getResources().getColor(R.color.bg_Gray));
@@ -104,31 +109,44 @@ public class MallOrdersActivity extends FragmentActivity {
                     reSearch(currentStatus);
                     break;
                 case R.id.bt_waiting:
-                    ((TextView) findViewById(R.id.tv_top_title)).setText("待发货");
+                    bt_all.setTextColor(getResources().getColor(R.color.bg_Gray));
+                    bt_waiting.setTextColor(getResources().getColor(R.color.darkgreen));
+                    bt_processing.setTextColor(getResources().getColor(R.color.bg_Gray));
+                    bt_completed.setTextColor(getResources().getColor(R.color.bg_Gray));
+
                     show_all.setBackgroundColor(getResources().getColor(R.color.bg_Gray));
-                    show_waitting.setBackgroundColor(getResources().getColor(R.color.bg_Black));
+                    show_waitting.setBackgroundColor(getResources().getColor(R.color.darkgreen));
                     show_processing.setBackgroundColor(getResources().getColor(R.color.bg_Gray));
                     show_completed.setBackgroundColor(getResources().getColor(R.color.bg_Gray));
+
 
                     currentStatus = 2;
                     reSearch(currentStatus);
                     break;
                 case R.id.bt_processing:
-                    ((TextView) findViewById(R.id.tv_top_title)).setText("已发货");
+                    bt_all.setTextColor(getResources().getColor(R.color.bg_Gray));
+                    bt_waiting.setTextColor(getResources().getColor(R.color.bg_Gray));
+                    bt_processing.setTextColor(getResources().getColor(R.color.darkgreen));
+                    bt_completed.setTextColor(getResources().getColor(R.color.bg_Gray));
+
                     show_all.setBackgroundColor(getResources().getColor(R.color.bg_Gray));
                     show_waitting.setBackgroundColor(getResources().getColor(R.color.bg_Gray));
-                    show_processing.setBackgroundColor(getResources().getColor(R.color.bg_Black));
+                    show_processing.setBackgroundColor(getResources().getColor(R.color.darkgreen));
                     show_completed.setBackgroundColor(getResources().getColor(R.color.bg_Gray));
 
                     currentStatus = 3;
                     reSearch(currentStatus);
                     break;
                 case R.id.bt_completed:
-                    ((TextView) findViewById(R.id.tv_top_title)).setText("请求售后");
+                    bt_all.setTextColor(getResources().getColor(R.color.bg_Gray));
+                    bt_waiting.setTextColor(getResources().getColor(R.color.bg_Gray));
+                    bt_processing.setTextColor(getResources().getColor(R.color.bg_Gray));
+                    bt_completed.setTextColor(getResources().getColor(R.color.darkgreen));
+
                     show_all.setBackgroundColor(getResources().getColor(R.color.bg_Gray));
                     show_waitting.setBackgroundColor(getResources().getColor(R.color.bg_Gray));
                     show_processing.setBackgroundColor(getResources().getColor(R.color.bg_Gray));
-                    show_completed.setBackgroundColor(getResources().getColor(R.color.bg_Black));
+                    show_completed.setBackgroundColor(getResources().getColor(R.color.darkgreen));
 
                     currentStatus = 6;
                     reSearch(currentStatus);
@@ -327,7 +345,7 @@ public class MallOrdersActivity extends FragmentActivity {
      * @param status
      */
     private void reSearch(int status) {
-        req = new RequestParam();
+        //req = new RequestParam();
         req.page = 1;
         req.Status = status;
         req.pageSize = PAGESIZE;
@@ -402,7 +420,10 @@ public class MallOrdersActivity extends FragmentActivity {
                     req.AccountID = USERINFO.AccountID;
                     req.AccountType = USERINFO.AccountType;
                     req.PropertyID = USERINFO.PropertyID;
-                    req.EstateID = data.getIntExtra("EstateID", 0);
+                    if (USERINFO.AccountType == 5 || USERINFO.AccountType == 6 )//小区管理员 或一般管理员
+                        req.EstateID = USERINFO.EstateID;
+                    else
+                        req.EstateID = data.getIntExtra("EstateID", 0);
                     req.StartDate = data.getStringExtra("StartDate");
                     req.EndDate = data.getStringExtra("EndDate");
                     req.pageSize = PAGESIZE;

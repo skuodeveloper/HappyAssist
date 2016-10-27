@@ -61,7 +61,7 @@ public class HouseKeepOrdersActivity extends Activity {
     /**
      * 请求条件
      */
-    private RequestParam req = null;
+    private RequestParam req  = new RequestParam();
     /**
      * 当前页面状态
      */
@@ -77,8 +77,13 @@ public class HouseKeepOrdersActivity extends Activity {
                     startActivityForResult(intent, REQUEST_FILTER_CODE);
                     break;
                 case R.id.bt_all:
-                    ((TextView) findViewById(R.id.tv_top_title)).setText("全部订单");
-                    show_all.setBackgroundColor(getResources().getColor(R.color.bg_Black));
+                    //((TextView) findViewById(R.id.tv_top_title)).setText("全部订单");
+                    bt_all.setTextColor(getResources().getColor(R.color.darkgreen));
+                    bt_waiting.setTextColor(getResources().getColor(R.color.bg_Gray));
+                    bt_processing.setTextColor(getResources().getColor(R.color.bg_Gray));
+                    bt_completed.setTextColor(getResources().getColor(R.color.bg_Gray));
+
+                    show_all.setBackgroundColor(getResources().getColor(R.color.darkgreen));
                     show_waitting.setBackgroundColor(getResources().getColor(R.color.bg_Gray));
                     show_processing.setBackgroundColor(getResources().getColor(R.color.bg_Gray));
                     show_completed.setBackgroundColor(getResources().getColor(R.color.bg_Gray));
@@ -87,9 +92,14 @@ public class HouseKeepOrdersActivity extends Activity {
                     reSearch(currentStatus);
                     break;
                 case R.id.bt_waiting:
-                    ((TextView) findViewById(R.id.tv_top_title)).setText("已提交");
+                    //((TextView) findViewById(R.id.tv_top_title)).setText("已提交");
+                    bt_all.setTextColor(getResources().getColor(R.color.bg_Gray));
+                    bt_waiting.setTextColor(getResources().getColor(R.color.darkgreen));
+                    bt_processing.setTextColor(getResources().getColor(R.color.bg_Gray));
+                    bt_completed.setTextColor(getResources().getColor(R.color.bg_Gray));
+
                     show_all.setBackgroundColor(getResources().getColor(R.color.bg_Gray));
-                    show_waitting.setBackgroundColor(getResources().getColor(R.color.bg_Black));
+                    show_waitting.setBackgroundColor(getResources().getColor(R.color.darkgreen));
                     show_processing.setBackgroundColor(getResources().getColor(R.color.bg_Gray));
                     show_completed.setBackgroundColor(getResources().getColor(R.color.bg_Gray));
 
@@ -97,21 +107,31 @@ public class HouseKeepOrdersActivity extends Activity {
                     reSearch(currentStatus);
                     break;
                 case R.id.bt_processing:
-                    ((TextView) findViewById(R.id.tv_top_title)).setText("派单中");
+                    //((TextView) findViewById(R.id.tv_top_title)).setText("派单中");
+                    bt_all.setTextColor(getResources().getColor(R.color.bg_Gray));
+                    bt_waiting.setTextColor(getResources().getColor(R.color.bg_Gray));
+                    bt_processing.setTextColor(getResources().getColor(R.color.darkgreen));
+                    bt_completed.setTextColor(getResources().getColor(R.color.bg_Gray));
+
                     show_all.setBackgroundColor(getResources().getColor(R.color.bg_Gray));
                     show_waitting.setBackgroundColor(getResources().getColor(R.color.bg_Gray));
-                    show_processing.setBackgroundColor(getResources().getColor(R.color.bg_Black));
+                    show_processing.setBackgroundColor(getResources().getColor(R.color.darkgreen));
                     show_completed.setBackgroundColor(getResources().getColor(R.color.bg_Gray));
 
                     currentStatus = 2;
                     reSearch(currentStatus);
                     break;
                 case R.id.bt_completed:
-                    ((TextView) findViewById(R.id.tv_top_title)).setText("已完成");
+                    //((TextView) findViewById(R.id.tv_top_title)).setText("已完成");
+                    bt_all.setTextColor(getResources().getColor(R.color.bg_Gray));
+                    bt_waiting.setTextColor(getResources().getColor(R.color.bg_Gray));
+                    bt_processing.setTextColor(getResources().getColor(R.color.bg_Gray));
+                    bt_completed.setTextColor(getResources().getColor(R.color.darkgreen));
+
                     show_all.setBackgroundColor(getResources().getColor(R.color.bg_Gray));
                     show_waitting.setBackgroundColor(getResources().getColor(R.color.bg_Gray));
                     show_processing.setBackgroundColor(getResources().getColor(R.color.bg_Gray));
-                    show_completed.setBackgroundColor(getResources().getColor(R.color.bg_Black));
+                    show_completed.setBackgroundColor(getResources().getColor(R.color.darkgreen));
 
                     currentStatus = 3;
                     reSearch(currentStatus);
@@ -178,7 +198,6 @@ public class HouseKeepOrdersActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_housekeep_order);
 
-        req = new RequestParam();
         mContext = this;
         initView();
     }
