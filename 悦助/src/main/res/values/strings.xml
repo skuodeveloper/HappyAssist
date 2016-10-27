@@ -9,10 +9,10 @@
     <string name="prompt_password">Password</string>
     <string name="action_sign_in">登陆</string>
     <string name="action_sign_in_short">Sign in</string>
-    <string name="error_invalid_name">This name is invalid</string>
-    <string name="error_invalid_password">This password is too short</string>
-    <string name="error_incorrect_password">This password is incorrect</string>
-    <string name="error_field_required">This field is required</string>
+    <string name="error_invalid_name">无效用户名</string>
+    <string name="error_invalid_password">请输入4位以上密码</string>
+    <string name="error_incorrect_password">用户名与密码不符，请重新输入</string>
+    <string name="error_field_required">请输入用户名和密码</string>
     <string name="permission_rationale">"Contacts permissions are needed for providing email completions."
     </string>
     <string name="title_activity_test">TestActivity</string>

@@ -85,7 +85,7 @@ public class Adapter_complaint_order extends BaseAdapter {
 
             holderView.ID.setText(String.valueOf(complaintInfo.ID));
             holderView.Info.setText(complaintInfo.Info);
-            holderView.Time.setText(complaintInfo.Time.replaceAll("T", " "));
+            holderView.Time.setText(complaintInfo.Time.replaceAll("T", " ").split("\\.")[0]);
             holderView.UserName.setText(complaintInfo.UserName);
             holderView.EstateName.setText(complaintInfo.EstateName);
 

@@ -101,7 +101,8 @@ public class Adapter_repair_order extends BaseAdapter {
 
             holderView.ID.setText(String.valueOf(rep.ID));
             holderView.Info.setText(rep.Info);
-            holderView.Time.setText(rep.Time.replaceAll("T", " "));
+            holderView.Time.setText(rep.Time.replaceAll("T", " ").split("\\.")[0]);
+
             holderView.UserName.setText(rep.UserName);
 
             if (rep.EstateName == null)
