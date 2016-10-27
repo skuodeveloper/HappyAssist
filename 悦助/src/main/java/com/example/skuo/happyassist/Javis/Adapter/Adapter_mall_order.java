@@ -96,7 +96,7 @@ public class Adapter_mall_order extends BaseAdapter {
 
             holderView.tv_productname.setText(god.GoodsNames);
             holderView.tv_orderid.setText(god.OrderCode);
-            holderView.tv_ordertime.setText(god.OrderTime.replaceAll("T","").split("\\.")[0]);
+            holderView.tv_ordertime.setText(god.OrderTime.replaceAll("T"," ").split("\\.")[0]);
             holderView.tv_price.setText("￥" + String.valueOf(god.Amount));
         }
         return currentView;
