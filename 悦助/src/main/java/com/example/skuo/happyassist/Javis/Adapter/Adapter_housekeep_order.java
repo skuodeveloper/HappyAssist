@@ -70,7 +70,7 @@ public class Adapter_housekeep_order extends BaseAdapter {
 
             switch (hkInfo.Status) {
                 case 1:
-                    holderView.tv_status.setText("已提交");
+                    holderView.tv_status.setText("未派单");
                     break;
                 case 2:
                     holderView.tv_status.setText("派单中");

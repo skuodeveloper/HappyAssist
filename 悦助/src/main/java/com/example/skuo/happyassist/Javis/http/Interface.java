@@ -33,6 +33,7 @@ public final class Interface {
      */
     public final static String GetRepairList = "http://192.168.16.172:8099/Repair/GetRepairList?";
     public final static String GetRepairImageList = "http://192.168.16.172:8099/Repair/GetRepairImageList?";
+    public final static String GetRepairHandleImageList = "http://192.168.16.172:8099/Repair/GetRepairHandleImageList?";
     public final static String UploadRepairPhoto = "http://192.168.16.172:8099/Repair/UploadRepairPhoto";
     public final static String SubmitRepairHandle = "http://192.168.16.172:8099/Repair/SubmitRepairHandle";
     public final static String GetCommonManagerList = "http://192.168.16.172:8099/Repair/GetCommonManagerList?";
@@ -45,6 +46,7 @@ public final class Interface {
     public final static String Refuse = "http://192.168.16.172:8099/GoodsOrder/Refuse";
     public final static String GetComplaintList = "http://192.168.16.172:8099/Complaint/GetComplaintList?";
     public final static String GetComplaintImageList = "http://192.168.16.172:8099/Complaint/GetComplaintImageList?";
+    public final static String GetComplaintHandleImageList = "http://192.168.16.172:8099/Complaint/GetComplaintHandleImageList?";
     public final static String SubmitComplaintHandle = "http://192.168.16.172:8099/Complaint/SubmitComplaintHandle";
     public final static String UploadComplaintPhoto = "http://192.168.16.172:8099/Complaint/UploadComplaintPhoto";
     public final static String SubmitAssignHandle1 = "http://192.168.16.172:8099/Complaint/SubmitAssignHandle";

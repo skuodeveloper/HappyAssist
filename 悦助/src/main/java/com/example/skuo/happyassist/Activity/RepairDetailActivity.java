@@ -172,10 +172,10 @@ public class RepairDetailActivity extends BaseActivity {
                 ((TextView) findViewById(R.id.tv_status)).setText("处理中");
 
                 //一般管理员
-                if(USERINFO.AccountType == 6){
+                if (USERINFO.AccountType == 6) {
                     ((Button) findViewById(R.id.btnOffer)).setVisibility(View.GONE);
-                }else{
-                    ((Button) findViewById(R.id.btnDone)).setVisibility(View.GONE);
+                } else {
+                    //((Button) findViewById(R.id.btnDone)).setVisibility(View.GONE);
                     ((Button) findViewById(R.id.btnOffer)).setVisibility(View.GONE);
                 }
 
@@ -230,16 +230,23 @@ public class RepairDetailActivity extends BaseActivity {
         @Override
         protected HashMap<String, Object> doInBackground(Void... arg0) {
             try {
+                hashMap = new HashMap<>();
+
                 //请求数据，返回json
                 HashMap<String, Object> params = new HashMap<String, Object>();
                 params.put("RepairID", infos.ID);
-                //params.put("EstateID", infos.);
 
-                String jsonStr = GetHttp.RequstGetHttp(Interface.GetRepairImageList, params);
-                RepairImage Rep = JSON.parseObject(jsonStr, RepairImage.class);
-
-                hashMap = new HashMap<>();
-                hashMap.put("data", Rep.Data.RepairImages);
+                String jsonStr = "";
+                if (infos.Status == 3){
+                    //已完成
+                    jsonStr = GetHttp.RequstGetHttp(Interface.GetRepairHandleImageList, params);
+                    RepairImage Rep = JSON.parseObject(jsonStr, RepairImage.class);
+                    hashMap.put("data", Rep.Data.RepairHandleImageExs);
+                } else {
+                    jsonStr = GetHttp.RequstGetHttp(Interface.GetRepairImageList, params);
+                    RepairImage Rep = JSON.parseObject(jsonStr, RepairImage.class);
+                    hashMap.put("data", Rep.Data.RepairImages);
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }

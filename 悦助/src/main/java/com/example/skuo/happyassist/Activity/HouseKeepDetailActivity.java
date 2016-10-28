@@ -95,7 +95,7 @@ public class HouseKeepDetailActivity extends BaseActivity {
 
         switch (infos.Status) {
             case 1:
-                ((TextView) findViewById(R.id.tv_status)).setText("已提交");
+                ((TextView) findViewById(R.id.tv_status)).setText("未派单");
                 ((TextView) findViewById(R.id.btnDispatch)).setVisibility(View.VISIBLE);
                 break;
             case 2:
@@ -105,7 +105,6 @@ public class HouseKeepDetailActivity extends BaseActivity {
 
                 ((TextView) findViewById(R.id.tv_staff)).setText(infos.ServiceStaff);
                 ((TextView) findViewById(R.id.tv_stafftel)).setText(infos.StaffTel);
-                ((TextView) findViewById(R.id.tv_status)).setText("派单中");
                 break;
             case 3:
                 ((TextView) findViewById(R.id.tv_status)).setText("已完成");

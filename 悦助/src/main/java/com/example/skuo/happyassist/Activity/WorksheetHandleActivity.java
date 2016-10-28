@@ -32,6 +32,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.skuo.happyassist.Javis.Adapter.Adapter_Grid_View;
+import com.example.skuo.happyassist.Javis.Data.USERINFO;
 import com.example.skuo.happyassist.Javis.Tools.Utils;
 import com.example.skuo.happyassist.Javis.http.Interface;
 import com.example.skuo.happyassist.Javis.http.PostHttp;
@@ -305,6 +306,8 @@ public class WorksheetHandleActivity extends AppCompatActivity {
             Map<String, String> params = new HashMap<String, String>();
             params.put("ID", sRepairID);
             params.put("Remark", sRemark);
+            params.put("AccountID", String.valueOf(USERINFO.AccountID));
+            params.put("TrueName", USERINFO.TrueName);
 
             try {
                 if (PrePage == 1)//投诉建议

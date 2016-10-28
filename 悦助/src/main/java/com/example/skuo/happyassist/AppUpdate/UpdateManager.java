@@ -15,6 +15,7 @@ import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
 import com.example.skuo.happyassist.Class.Result.AppVersion;
@@ -132,14 +133,17 @@ public class UpdateManager {
     private boolean isUpdate() {
         // 获取当前软件版本
         String versionName = getVersionName(mContext);
-
-        String jsonStr = GetHttp.RequstGetHttp(Interface.GetPhoneAppVersionCode, null);
-        appVersion = JSON.parseObject(jsonStr, AppVersion.class);
-        if (appVersion.Data != null) {
-            Map<String, Object> param = new HashMap<String, Object>();
-            param.put("AppVersion", appVersion.Data.AppVersion);
-            jsonStr = GetHttp.RequstGetHttp(Interface.GetPhoneAppVersionInfo, param);
+        try {
+            String jsonStr = GetHttp.RequstGetHttp(Interface.GetPhoneAppVersionCode, null);
             appVersion = JSON.parseObject(jsonStr, AppVersion.class);
+            if (appVersion.Data != null) {
+                Map<String, Object> param = new HashMap<String, Object>();
+                param.put("AppVersion", appVersion.Data.AppVersion);
+                jsonStr = GetHttp.RequstGetHttp(Interface.GetPhoneAppVersionInfo, param);
+                appVersion = JSON.parseObject(jsonStr, AppVersion.class);
+            }
+        } catch (Exception e) {
+            Toast.makeText(mContext,"网络连接故障!",Toast.LENGTH_SHORT).show();
         }
 
         return !appVersion.Data.AppVersion.equals(versionName);

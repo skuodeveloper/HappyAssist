@@ -42,7 +42,7 @@
                 android:gravity="center"
                 android:paddingBottom="10dp"
                 android:paddingTop="10dp"
-                android:text="已提交"
+                android:text="未派单"
                 android:textColor="@color/bg_Gray" />
 
             <View

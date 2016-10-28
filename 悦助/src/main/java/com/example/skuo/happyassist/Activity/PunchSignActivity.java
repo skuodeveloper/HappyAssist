@@ -2,6 +2,7 @@ package com.example.skuo.happyassist.Activity;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -12,6 +13,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
 import com.example.skuo.happyassist.Class.Result.SignIn;
@@ -44,6 +46,7 @@ public class PunchSignActivity extends Activity {
     private String nowday;
     private long nd = 1000 * 24L * 60L * 60L;//一天的毫秒数
     SimpleDateFormat simpleDateFormat, sd1, sd2;
+    private Context mContext;
 
     private ArrayList<String> signday = new ArrayList<>();
 
@@ -52,6 +55,7 @@ public class PunchSignActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_punch_sign);
 
+        mContext = this;
         simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         nowday = simpleDateFormat.format(new Date());
         sd1 = new SimpleDateFormat("yyyy");
@@ -175,7 +179,10 @@ public class PunchSignActivity extends Activity {
                 params.put("PropertyID", String.valueOf(USERINFO.PropertyID));
                 params.put("EstateID", String.valueOf(USERINFO.EstateID));
 
-                PostHttp.RequstPostHttp(Interface.SignIn, params);
+                String jsonStr = PostHttp.RequstPostHttp(Interface.SignIn, params);
+                SignIn signIn = JSON.parseObject(jsonStr, SignIn.class);
+
+                Toast.makeText(mContext, signIn.ErrorMsg, Toast.LENGTH_LONG).show();
 
                 //请求网络数据
                 new WareTask().execute();

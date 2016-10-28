@@ -8,4 +8,5 @@ import java.util.ArrayList;
 public class ComplaintImageList {
     public int TotalCount;
     public ArrayList<ImageInfo> ComplaintImages = new ArrayList<ImageInfo>();
+    public ArrayList<ImageInfo> ComplaintHandleImageExs = new ArrayList<ImageInfo>();
 }

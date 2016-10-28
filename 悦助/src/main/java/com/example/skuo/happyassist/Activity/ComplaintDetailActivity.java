@@ -173,7 +173,7 @@ public class ComplaintDetailActivity extends BaseActivity {
                 if (USERINFO.AccountType == 6) {
                     ((Button) findViewById(R.id.btnOffer)).setVisibility(View.GONE);
                 } else {
-                    ((Button) findViewById(R.id.btnDone)).setVisibility(View.GONE);
+                    //((Button) findViewById(R.id.btnDone)).setVisibility(View.GONE);
                     ((Button) findViewById(R.id.btnOffer)).setVisibility(View.GONE);
                 }
                 break;
@@ -227,20 +227,26 @@ public class ComplaintDetailActivity extends BaseActivity {
         @Override
         protected HashMap<String, Object> doInBackground(Void... arg0) {
             try {
+                hashMap = new HashMap<>();
+
                 //请求数据，返回json
                 HashMap<String, Object> params = new HashMap<String, Object>();
-                params.put("RepairID", infos.ID);
-                //params.put("EstateID", infos.);
+                params.put("ComplaintID", infos.ID);
 
-                String jsonStr = GetHttp.RequstGetHttp(Interface.GetComplaintImageList, params);
-                ComplaintImage Rep = JSON.parseObject(jsonStr, ComplaintImage.class);
-
-                hashMap = new HashMap<>();
-                hashMap.put("data", Rep.Data.ComplaintImages);
+                String jsonStr = "";
+                if (infos.Status == 3){
+                    //已完成
+                    jsonStr = GetHttp.RequstGetHttp(Interface.GetComplaintHandleImageList, params);
+                    ComplaintImage Rep = JSON.parseObject(jsonStr, ComplaintImage.class);
+                    hashMap.put("data", Rep.Data.ComplaintHandleImageExs);
+                } else {
+                    jsonStr = GetHttp.RequstGetHttp(Interface.GetComplaintImageList, params);
+                    ComplaintImage Rep = JSON.parseObject(jsonStr, ComplaintImage.class);
+                    hashMap.put("data", Rep.Data.ComplaintImages);
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
             return hashMap;
         }
 
