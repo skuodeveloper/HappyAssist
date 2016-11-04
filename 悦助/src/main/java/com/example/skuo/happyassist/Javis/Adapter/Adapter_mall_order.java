@@ -55,6 +55,7 @@ public class Adapter_mall_order extends BaseAdapter {
             holderView.tv_orderid = (TextView) currentView.findViewById(R.id.tv_orderid);
             holderView.tv_ordertime = (TextView) currentView.findViewById(R.id.tv_ordertime);
             holderView.tv_productname = (TextView) currentView.findViewById(R.id.tv_productname);
+            holderView.tv_receiver = (TextView) currentView.findViewById(R.id.tv_receiver);
             holderView.tv_price = (TextView) currentView.findViewById(R.id.tv_price);
             holderView.tv_status = (TextView) currentView.findViewById(R.id.tv_status);
 
@@ -95,6 +96,7 @@ public class Adapter_mall_order extends BaseAdapter {
             }
 
             holderView.tv_productname.setText(god.GoodsNames);
+            holderView.tv_receiver.setText(god.GoodsNames);
             holderView.tv_orderid.setText(god.OrderCode);
             holderView.tv_ordertime.setText(god.OrderTime.replaceAll("T"," ").split("\\.")[0]);
             holderView.tv_price.setText("￥" + String.valueOf(god.Amount));
@@ -107,6 +109,7 @@ public class Adapter_mall_order extends BaseAdapter {
         private TextView tv_ordertime;
         private TextView tv_orderid;
         private TextView tv_productname;
+        private TextView tv_receiver;
         private TextView tv_price;
         private TextView tv_status;
     }

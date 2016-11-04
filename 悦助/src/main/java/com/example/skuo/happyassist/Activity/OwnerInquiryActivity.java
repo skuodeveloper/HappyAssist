@@ -10,6 +10,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -17,6 +18,7 @@ import android.widget.Toast;
 import com.alibaba.fastjson.JSON;
 import com.example.skuo.happyassist.Class.Request.RequestParam;
 import com.example.skuo.happyassist.Class.Result.User;
+import com.example.skuo.happyassist.Class.Result.UserInfo;
 import com.example.skuo.happyassist.Javis.Adapter.Adapter_owner_list;
 import com.example.skuo.happyassist.Javis.Data.USERINFO;
 import com.example.skuo.happyassist.Javis.MyView.MyCustomListView;
@@ -170,16 +172,22 @@ public class OwnerInquiryActivity extends AppCompatActivity {
                     Toast.makeText(mContext, "已经最后一页了", Toast.LENGTH_SHORT).show();
                     break;
                 case JUMP_TO_DETAIL:
-//                    try {
-//                        Intent intent = new Intent(mContext, RepairDetailActivity.class);
-//
-//                        RepairInfo rep = (RepairInfo) msg.obj;
-//                        intent.putExtra("Infos", rep);
-//
-//                        startActivityForResult(intent, JUMP_TO_DETAIL);
-//                    } catch (Exception ex) {
-//                        ex.printStackTrace();
-//                    }
+                    try {
+                        Intent intent = new Intent(mContext, AuthenActivity.class);
+                        UserInfo userInfo = (UserInfo) msg.obj;
+
+                        //未认证
+                        if (userInfo.IsAuthen == 1) {
+                            intent.putExtra("UserAccountID", userInfo.ID);
+                            intent.putExtra("HouseID", userInfo.HouseID);
+                            intent.putExtra("UserName", userInfo.UserName);
+                            intent.putExtra("Phone", userInfo.Phone);
+
+                            startActivityForResult(intent, JUMP_TO_DETAIL);
+                        }
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
                     break;
                 default:
                     break;
@@ -214,6 +222,7 @@ public class OwnerInquiryActivity extends AppCompatActivity {
 
         req.Status = currentStatus;
         req.Phone = "";
+        req.Name = "";
         pageIndex = 1;
 
         //请求网络数据
@@ -337,6 +346,20 @@ public class OwnerInquiryActivity extends AppCompatActivity {
                 loadData(1);
             }
         });
+
+        GroupList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
+                try {
+                    Message msg = new Message();
+                    msg.what = JUMP_TO_DETAIL;
+                    msg.obj = arrayList.get(position - 1);
+                    myHandler.handleMessage(msg);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
     }
 
     @Override
@@ -359,6 +382,7 @@ public class OwnerInquiryActivity extends AppCompatActivity {
                     req.CellID = data.getIntExtra("CellID", 0);
                     req.HouseID = data.getIntExtra("HouseID", 0);
                     req.Phone = data.getStringExtra("Phone");
+                    req.Name = "";
 
                     //请求网络数据
                     new WareTask().execute();

@@ -24,4 +24,5 @@ public class RequestParam {
     public String Phone;
     public String PhoneNo;
     public String UserName;
+    public String Name;
 }
