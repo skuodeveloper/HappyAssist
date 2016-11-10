@@ -47,9 +47,9 @@ import java.util.Map;
 
 public class UserInfoActivity extends AppCompatActivity {
     private ImageView iv_back;
-    private Button btnSave, btnLogout;
+    private Button btnLogout;
     private MyImageView imageView;
-    private TextView tv_name,tv_phone;
+    private TextView tv_name, tv_phone, tv_Save;
     private static final int BACK = 1;
     private static final int SAVE = 2;
     private static final int ALBUM_REQUEST_CODE = 1;
@@ -149,7 +149,7 @@ public class UserInfoActivity extends AppCompatActivity {
     }
 
     public void initView() {
-        ((TextView) findViewById(R.id.tv_top_title)).setText("个人资料修改");
+        ((TextView) findViewById(R.id.tv_top_title)).setText("编辑个人信息");
 
         tv_name = (TextView) findViewById(R.id.tv_name);
         tv_name.setText(USERINFO.TrueName);
@@ -166,8 +166,8 @@ public class UserInfoActivity extends AppCompatActivity {
             }
         });
 
-        btnSave = (Button) findViewById(R.id.btnSave);
-        btnSave.setOnClickListener(new View.OnClickListener() {
+        tv_Save = (TextView) findViewById(R.id.tv_Save);
+        tv_Save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 show(SAVE);
@@ -255,9 +255,12 @@ public class UserInfoActivity extends AppCompatActivity {
                 startCrop(data.getData());
                 break;
             case CAMERA_REQUEST_CODE:
-                File picture = new File(Environment.getExternalStorageDirectory()
-                        + "/head.jpg");
-                startCrop(Uri.fromFile(picture));
+                if (resultCode == RESULT_OK) {
+                    File picture = new File(Environment.getExternalStorageDirectory()
+                            + "/head.jpg");
+
+                    startCrop(Uri.fromFile(picture));
+                }
                 break;
             case CROP_REQUEST_CODE:
                 if (data == null) {
